@@ -1,0 +1,35 @@
+{
+    "bwa_docker": {
+        "description": "Docker image for BWA-MEM2 and SAMtools"
+    },
+    "picard_docker": {
+        "description": "Docker image for Picard"
+    },
+    "fasta": {
+        "description": "Reference genome fasta file"
+    },
+    "fai": {
+        "description": "Reference genome fai file"
+    },
+    "fasta_0123": {
+        "description": "Reference genome 0123 file"
+    },
+    "fasta_amb": {
+        "description": "Reference genome amb file"
+    },
+    "fasta_ann": {
+        "description": "Reference genome ann file"
+    },
+    "fasta_bwt": {
+        "description": "Reference genome bwt file"
+    },
+    "fastq_r1": {
+        "description": "Fastq file for read 1"
+    },
+    "fastq_r2": {
+        "description": "Fastq file for read 2"
+    },
+    "sample_name": {
+        "description": "Sample name"
+    }
+}

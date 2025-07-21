@@ -1,0 +1,14 @@
+{
+    "bwa_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/bwa-mem2:2.3_samtools-1.22",
+    "picard_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/picard:latest",
+    "fasta": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.fa",
+    "fai": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/hg38.fa.fai",
+    "fasta_0123": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.fa.0123",
+    "fasta_amb": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.fa.amb",
+    "fasta_ann": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.fa.ann",
+    "fasta_bwt": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.fa.bwt.2bit.64",
+    "fasta_pac": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.fa.pac",
+    "fastq_r1": "s3://ucla-rare-diseases/UCLA-UDN/raw-data/SCA4/Psomagen-3540_210504_H7CC3_2/3540_R1.fastq.gz",
+    "fastq_r2": "s3://ucla-rare-diseases/UCLA-UDN/raw-data/SCA4/Psomagen-3540_210504_H7CC3_2/3540_R2.fastq.gz",
+    "sample_name": "3540"
+}

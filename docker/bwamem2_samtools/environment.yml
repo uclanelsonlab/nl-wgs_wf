@@ -1,0 +1,14 @@
+name: bioenv
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bwa-mem2=2.3
+  - samtools=1.22
+  - htslib=1.22
+  - zlib
+  - bzip2
+  - xz
+  - curl
+  - ca-certificates 
