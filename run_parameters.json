@@ -1,6 +1,7 @@
 {
     "bwa_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/bwa-mem2:2.3_samtools-1.22",
     "picard_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/picard:latest",
+    "deepvariant_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/deepvariant:1.9.0",
     "fasta": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.fa",
     "fai": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/hg38.fa.fai",
     "fasta_0123": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.fa.0123",

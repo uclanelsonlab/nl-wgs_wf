@@ -1,9 +1,9 @@
 nextflow.enable.dsl = 2
 
-// Import the BWAMEM2_MEM module
 include { BWAMEM2_MEM } from './modules/bwamem2/main'
 include { SAMTOOLS_SORT } from './modules/samtools/main'
 include { PICARD_MARKDUPLICATES } from './modules/picard/main'
+include { DEEPVARIANT_RUNDEEPVARIANT } from './modules/deepvariant/main'
 
 log.info """\
     SHORTREAD - WGS _ W F   P I P E L I N E
@@ -73,15 +73,19 @@ workflow {
         ch_index,
         ch_fasta
     )
-
     // Sort BAM file
     SAMTOOLS_SORT(
         BWAMEM2_MEM.out.bam
     )
-
     // Mark duplicates
     PICARD_MARKDUPLICATES(
         SAMTOOLS_SORT.out.bam,
+        ch_fasta
+    )
+
+    // Run DeepVariant
+    DEEPVARIANT_RUNDEEPVARIANT(
+        PICARD_MARKDUPLICATES.out.bam,
         ch_fasta
     )
 }

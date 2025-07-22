@@ -7,9 +7,9 @@ process PICARD_MARKDUPLICATES {
         tuple val(meta2), path(fasta_files)
 
     output:
-        tuple val(meta), path("*.MarkDuplicates.bam"), path("*.MarkDuplicates.bam.bai") , emit: bam
-        tuple val(meta), path("*.metrics.txt")                                          , emit: metrics
-        path  "versions.yml"                                                            , emit: versions
+        tuple val(meta), path("*.MarkDuplicates.bam"), path("*.MarkDuplicates.bai") , emit: bam
+        tuple val(meta), path("*.metrics.txt")                       , emit: metrics
+        path  "versions.yml"                                         , emit: versions
 
     when:
         task.ext.when == null || task.ext.when

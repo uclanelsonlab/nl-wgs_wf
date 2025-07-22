@@ -5,6 +5,9 @@
     "picard_docker": {
         "description": "Docker image for Picard"
     },
+    "deepvariant_docker": {
+        "description": "Docker image for DeepVariant"
+    },
     "fasta": {
         "description": "Reference genome fasta file"
     },
