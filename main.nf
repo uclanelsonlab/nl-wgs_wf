@@ -1,9 +1,12 @@
 nextflow.enable.dsl = 2
 
+include { CNVPYTOR } from './modules/cnvpytor/main'
 include { BWAMEM2_MEM } from './modules/bwamem2/main'
-include { SAMTOOLS_SORT } from './modules/samtools/main'
+include { MANTA_GERMLINE } from './modules/manta/main'
 include { PICARD_MARKDUPLICATES } from './modules/picard/main'
 include { DEEPVARIANT_RUNDEEPVARIANT } from './modules/deepvariant/main'
+include { SAMTOOLS_SORT; SAMTOOLS_BAM2CRAM; SAMTOOLS_INDEX } from './modules/samtools/main'
+include { EXPANSIONHUNTER; EXPANSIONHUNTERDENOVO_PROFILE } from './modules/expansionhunter/main'
 
 log.info """\
     SHORTREAD - WGS _ W F   P I P E L I N E
@@ -19,7 +22,6 @@ log.info """\
 // Single channel for paired-end reads
 Channel
     .fromPath(params.fastq_r1)
-    .ifEmpty { error "Cannot find any reads matching: ${params.fastq_r1}" }
     .map { r1_file ->
         def meta = [:]
         meta.id = params.sample_name ?: r1_file.baseName
@@ -82,10 +84,41 @@ workflow {
         SAMTOOLS_SORT.out.bam,
         ch_fasta
     )
-
+    // Index BAM file
+    SAMTOOLS_INDEX(
+        PICARD_MARKDUPLICATES.out.bam
+    )
     // Run DeepVariant
-    DEEPVARIANT_RUNDEEPVARIANT(
-        PICARD_MARKDUPLICATES.out.bam,
+    // DEEPVARIANT_RUNDEEPVARIANT(
+    //     SAMTOOLS_INDEX.out.bam,
+    //     ch_fasta
+    // )
+    // Run ExpansionHunter
+    EXPANSIONHUNTER(
+        SAMTOOLS_INDEX.out.bam,
+        ch_fasta,
+        params.variant_catalog
+    )
+    // Run Manta
+    MANTA_GERMLINE(
+        SAMTOOLS_INDEX.out.bam,
+        ch_fasta
+    )
+    // Run CNVpytor
+    CNVPYTOR(
+        SAMTOOLS_INDEX.out.bam,
+        ch_fasta
+    )
+    // Run ExpansionHunterDenovo
+    EXPANSIONHUNTERDENOVO_PROFILE(
+        SAMTOOLS_INDEX.out.bam,
+        ch_fasta,
+        params.min_anchor_mapq,
+        params.max_irr_mapq
+    )
+    // Convert BAM to CRAM
+    SAMTOOLS_BAM2CRAM(
+        SAMTOOLS_INDEX.out.bam,
         ch_fasta
     )
 }

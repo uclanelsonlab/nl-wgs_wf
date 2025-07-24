@@ -7,9 +7,9 @@ process PICARD_MARKDUPLICATES {
         tuple val(meta2), path(fasta_files)
 
     output:
-        tuple val(meta), path("*.MarkDuplicates.bam"), path("*.MarkDuplicates.bai") , emit: bam
-        tuple val(meta), path("*.metrics.txt")                       , emit: metrics
-        path  "versions.yml"                                         , emit: versions
+        tuple val(meta), path("*.MarkDuplicates.bam") , emit: bam
+        tuple val(meta), path("*.metrics.txt")        , emit: metrics
+        path  "picard_versions.yml"                   , emit: versions
 
     when:
         task.ext.when == null || task.ext.when
@@ -30,13 +30,12 @@ process PICARD_MARKDUPLICATES {
             --VALIDATION_STRINGENCY LENIENT \\
             --ASSUME_SORT_ORDER coordinate \\
             --PROGRAM_RECORD_ID MarkDuplicates \\
-            --CREATE_INDEX true \\
             --REFERENCE_SEQUENCE ${fasta} \\
             --INPUT $reads \\
             --OUTPUT ${prefix}.MarkDuplicates.bam  \\
             --METRICS_FILE ${prefix}.MarkDuplicates.metrics.txt 
 
-        cat <<-END_VERSIONS > versions.yml
+        cat <<-END_VERSIONS > picard_versions.yml
         "${task.process}":
             picard: \$(echo \$(picard MarkDuplicates --version 2>&1) | grep -o 'Version:.*' | cut -f2- -d:)
         END_VERSIONS
@@ -48,7 +47,7 @@ process PICARD_MARKDUPLICATES {
         touch ${prefix}.MarkDuplicates.bam
         touch ${prefix}.MarkDuplicates.metrics.txt
 
-        cat <<-END_VERSIONS > versions.yml
+        cat <<-END_VERSIONS > picard_versions.yml
         "${task.process}":
             picard: \$(echo \$(picard MarkDuplicates --version 2>&1) | grep -o 'Version:.*' | cut -f2- -d:)
         END_VERSIONS

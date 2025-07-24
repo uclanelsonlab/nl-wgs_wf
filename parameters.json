@@ -8,6 +8,18 @@
     "deepvariant_docker": {
         "description": "Docker image for DeepVariant"
     },
+    "manta_docker": {
+        "description": "Docker image for Manta"
+    },
+    "cnvpytor_docker": {
+        "description": "Docker image for CNVpytor"
+    },
+    "expansionhunter_docker": {
+        "description": "Docker image for ExpansionHunter"
+    },
+    "expansionhunterdenovo_docker": {
+        "description": "Docker image for ExpansionHunterDenovo"
+    },
     "fasta": {
         "description": "Reference genome fasta file"
     },
@@ -34,5 +46,8 @@
     },
     "sample_name": {
         "description": "Sample name"
+    },
+    "variant_catalog": {
+        "description": "Variant catalog file"
     }
 }

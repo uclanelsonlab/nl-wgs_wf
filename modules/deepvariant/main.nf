@@ -3,19 +3,19 @@ process DEEPVARIANT_RUNDEEPVARIANT {
     label 'deepvariant_run_deepvariant'
 
     input:
-    tuple val(meta), path(bam), path(bai)
-    tuple val(meta2), path(fasta_files)
+        tuple val(meta), path(bam), path(bai)
+        tuple val(meta2), path(fasta_files)
 
     output:
-    tuple val(meta), path("${prefix}.deepvariant.vcf.gz"), path("${prefix}.deepvariant.vcf.gz.tbi")     , emit: vcf
-    tuple val(meta), path("${prefix}.deepvariant.gvcf.gz"), path("${prefix}.deepvariant.gvcf.gz.tbi")   , emit: gvcf
-    path "versions.yml"                                                                                 , emit: versions
+        tuple val(meta), path("*.deepvariant.vcf.gz"), path("*.deepvariant.vcf.gz.tbi"), emit: vcf
+        tuple val(meta), path("*.deepvariant.gvcf.gz"), path("*.deepvariant.gvcf.gz.tbi"), emit: gvcf
+        path "deepvariant_versions.yml", emit: versions
 
     when:
-    task.ext.when == null || task.ext.when
+        task.ext.when == null || task.ext.when
 
     script:
-        prefix = task.ext.prefix ?: "${meta.id}"
+        def prefix = task.ext.prefix ?: "${meta.id}"
         def fasta = fasta_files[0]  // First file is the FASTA
 
         """
@@ -27,21 +27,21 @@ process DEEPVARIANT_RUNDEEPVARIANT {
             --output_gvcf ${prefix}.deepvariant.gvcf.gz \\
             --num_shards ${task.cpus} --logging_dir ./logs
 
-        cat <<-END_VERSIONS > versions.yml
+        cat <<-END_VERSIONS > deepvariant_versions.yml
         "${task.process}":
             deepvariant_callvariants: \$(echo \$(/opt/deepvariant/bin/run_deepvariant --version) | sed 's/^.*version //; s/ .*\$//' )
         END_VERSIONS
         """
 
     stub:
-    prefix = task.ext.prefix ?: "${meta.id}"
-    """
-    echo "" | gzip > ${prefix}.deepvariant.vcf.gz
-    echo "" | gzip > ${prefix}.deepvariant.gvcf.gz
+        def prefix = task.ext.prefix ?: "${meta.id}"
+        """
+        echo "" | gzip > ${prefix}.deepvariant.vcf.gz
+        echo "" | gzip > ${prefix}.deepvariant.gvcf.gz
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        deepvariant_callvariants: \$(echo \$(/opt/deepvariant/bin/run_deepvariant --version) | sed 's/^.*version //; s/ .*\$//' )
-    END_VERSIONS
-    """
+        cat <<-END_VERSIONS > deepvariant_versions.yml
+        "${task.process}":
+            deepvariant_callvariants: \$(echo \$(/opt/deepvariant/bin/run_deepvariant --version) | sed 's/^.*version //; s/ .*\$//' )
+        END_VERSIONS
+        """
 }
