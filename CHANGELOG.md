@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ExpansionHunterDenovo de novo repeat detection module
 - DeepVariant SNV/indel calling module (commented out)
 - BAM to CRAM conversion module
+- FASTP quality control and adapter trimming module
 - S3 support for input/output files
 - Docker container support for all tools
 - Comprehensive error handling and validation
@@ -40,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Memory allocation issues in samtools sort
 - File path handling for S3 and local files
 - Process output file naming consistency
+- FASTP module output paths and workflow integration
+- Missing expansionhunterdenovo Docker parameter
 
 ### Technical Details
 
@@ -52,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **EXPANSIONHUNTER**: Updated input/output structure
 - **MANTA_GERMLINE**: Enhanced with proper reference handling
 - **EXPANSIONHUNTERDENOVO_PROFILE**: Added parameter validation
+- **FASTP**: Fixed output paths, added cleaned FASTQ outputs, integrated with workflow
 
 #### Configuration Changes
 - Added S3 configuration for cloud execution

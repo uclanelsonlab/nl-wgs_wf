@@ -1,5 +1,6 @@
 nextflow.enable.dsl = 2
 
+include { FASTP } from './modules/fastp/main'
 include { CNVPYTOR } from './modules/cnvpytor/main'
 include { BWAMEM2_MEM } from './modules/bwamem2/main'
 include { MANTA_GERMLINE } from './modules/manta/main'
@@ -69,9 +70,12 @@ Channel
     .set { ch_index }
 
 workflow {
-    // Run BWA-MEM2 alignment
+    // Run Fastp for quality control and adapter trimming
+    FASTP(ch_reads)
+    
+    // Run BWA-MEM2 alignment using cleaned reads from FASTP
     BWAMEM2_MEM(
-        ch_reads,
+        FASTP.out.reads,
         ch_index,
         ch_fasta
     )
@@ -89,10 +93,10 @@ workflow {
         PICARD_MARKDUPLICATES.out.bam
     )
     // Run DeepVariant
-    // DEEPVARIANT_RUNDEEPVARIANT(
-    //     SAMTOOLS_INDEX.out.bam,
-    //     ch_fasta
-    // )
+    DEEPVARIANT_RUNDEEPVARIANT(
+        SAMTOOLS_INDEX.out.bam,
+        ch_fasta
+    )
     // Run ExpansionHunter
     EXPANSIONHUNTER(
         SAMTOOLS_INDEX.out.bam,
