@@ -19,7 +19,7 @@ process CNVPYTOR {
         def prefix = task.ext.prefix ?: "${meta.id}"
         def fasta = fasta_files[0]  // First file is the FASTA
         """
-        cnvpytor -root ${prefix}.pytor -rd ${aln} -T ${fasta_ref}
+        cnvpytor -root ${prefix}.pytor -rd ${bam} -T ${fasta}
         cnvpytor -root ${prefix}.pytor -his 1000
         cnvpytor -root ${prefix}.pytor -partition 1000
         cnvpytor -root ${prefix}.pytor -call 1000 > ${prefix}.tsv
@@ -36,7 +36,7 @@ process CNVPYTOR {
             app.print_calls_file()
         CODE
 
-        cat <<-END_VERSIONS > versions.yml
+        cat <<-END_VERSIONS > cnvpytor_versions.yml
         "${task.process}":
             cnvpytor: \$(cnvpytor --version | sed -n 's/.*CNVpytor \\(.*\\)/\\1/p')
         END_VERSIONS

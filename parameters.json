@@ -49,5 +49,11 @@
     },
     "variant_catalog": {
         "description": "Variant catalog file"
+    },
+    "min_anchor_mapq": {
+        "description": "Minimum anchor mapq"
+    },
+    "max_irr_mapq": {
+        "description": "Maximum irr mapq"
     }
 }
