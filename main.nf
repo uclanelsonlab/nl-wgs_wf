@@ -1,6 +1,7 @@
 nextflow.enable.dsl = 2
 
 include { FASTP } from './modules/fastp/main'
+include { AUTOMAP } from './modules/automap/main'
 include { MULTIQC } from './modules/multiqc/main'
 include { CNVPYTOR } from './modules/cnvpytor/main'
 include { BWAMEM2_MEM } from './modules/bwamem2/main'
@@ -115,10 +116,10 @@ workflow {
     )
     
     // Run variant calling
-    // DEEPVARIANT_RUNDEEPVARIANT(
-    //     SAMTOOLS_INDEX.out.bam,
-    //     ch_fasta
-    // )
+    DEEPVARIANT_RUNDEEPVARIANT(
+        SAMTOOLS_INDEX.out.bam,
+        ch_fasta
+    )
     // Run repeats calling
     // EXPANSIONHUNTER(
     //     SAMTOOLS_INDEX.out.bam,
