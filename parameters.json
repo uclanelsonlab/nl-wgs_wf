@@ -20,6 +20,9 @@
     "expansionhunterdenovo_docker": {
         "description": "Docker image for ExpansionHunterDenovo"
     },
+    "multiqc_docker": {
+        "description": "Docker image for MultiQC"
+    },
     "fasta": {
         "description": "Reference genome fasta file"
     },
@@ -55,5 +58,11 @@
     },
     "max_irr_mapq": {
         "description": "Maximum irr mapq"
+    },
+    "fastp_docker": {
+        "description": "Docker image for Fastp"
+    },
+    "qualimap_docker": {
+        "description": "Docker image for Qualimap"
     }
 }

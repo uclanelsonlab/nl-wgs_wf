@@ -7,10 +7,11 @@ process CNVPYTOR {
         tuple val(meta2), path(fasta_files)
 
     output:
-        tuple val(meta), path("*.pytor") , emit: cnvpytor_pytor
-        tuple val(meta), path("*.tsv")   , emit: cnvpytor_tab
-        tuple val(meta), path("*.vcf")   , emit: cnvpytor_vcf
-        path "cnvpytor_versions.yml"     , emit: versions
+        tuple val(meta), path("*.pytor")            , emit: cnvpytor_pytor
+        tuple val(meta), path("*1000.vcf")          , emit: cnvpytor_vcf
+        tuple val(meta), path("*filtered.vcf")      , emit: cnvpytor_filtered_vcf
+        tuple val(meta), path("*manhattan_plot.png"), emit: cnvpytor_manhattan_plot
+        path "cnvpytor_versions.yml"                , emit: versions
 
     when:
         task.ext.when == null || task.ext.when
@@ -22,7 +23,23 @@ process CNVPYTOR {
         cnvpytor -root ${prefix}.pytor -rd ${bam} -T ${fasta}
         cnvpytor -root ${prefix}.pytor -his 1000
         cnvpytor -root ${prefix}.pytor -partition 1000
-        cnvpytor -root ${prefix}.pytor -call 1000 > ${prefix}.tsv
+        cnvpytor -root ${prefix}.pytor -view 1000 <<EOF
+        set Q0_range -1 0.5
+        set p_N 0 0.5
+        set size_range 300 inf
+        set dG_range 100000 inf
+        set p_range 0 0.05
+        set print_filename ${prefix}_cnvpytor_1000_filtered.vcf
+        print calls
+        EOF
+
+        cnvpytor -root ${prefix}.pytor -view 1000 <<EOF 
+        set style bmh
+        set rd_use_mask
+        set file_titles ${prefix}
+        manhattan
+        save ${prefix}_manhattan_plot.png
+        EOF
 
         python3 <<CODE
         import cnvpytor,os

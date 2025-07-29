@@ -92,18 +92,10 @@ nextflow run main.nf \
     --fastq_r1 "path/to/sample_R1.fastq.gz" \
     --fastq_r2 "path/to/sample_R2.fastq.gz" \
     --fasta "path/to/reference.fasta" \
-    --fai "path/to/reference.fasta.fai"
-```
-
-### S3 Usage
-
-```bash
-nextflow run main.nf \
-    --sample_name "Sample_001" \
-    --fastq_r1 "s3://bucket/path/sample_R1.fastq.gz" \
-    --fastq_r2 "s3://bucket/path/sample_R2.fastq.gz" \
-    --fasta "s3://bucket/reference/hg38.fa" \
-    --fai "s3://bucket/reference/hg38.fa.fai"
+    --fai "path/to/reference.fasta.fai" \
+    --variant_catalog "path/to/variant_catalog.json" \
+    --min_anchor_mapq 50 \
+    --max_irr_mapq 40
 ```
 
 ## Input Parameters

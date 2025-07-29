@@ -1,13 +1,15 @@
 nextflow.enable.dsl = 2
 
 include { FASTP } from './modules/fastp/main'
+include { MULTIQC } from './modules/multiqc/main'
 include { CNVPYTOR } from './modules/cnvpytor/main'
 include { BWAMEM2_MEM } from './modules/bwamem2/main'
 include { MANTA_GERMLINE } from './modules/manta/main'
-include { PICARD_MARKDUPLICATES } from './modules/picard/main'
+include { QUALIMAP_BAMQC } from './modules/qualimap/main'
 include { DEEPVARIANT_RUNDEEPVARIANT } from './modules/deepvariant/main'
 include { SAMTOOLS_SORT; SAMTOOLS_BAM2CRAM; SAMTOOLS_INDEX } from './modules/samtools/main'
 include { EXPANSIONHUNTER; EXPANSIONHUNTERDENOVO_PROFILE } from './modules/expansionhunter/main'
+include { PICARD_MARKDUPLICATES; PICARD_COLLECT_MULTIPLE_METRICS; PICARD_COLLECT_WGS_METRICS } from './modules/picard/main'
 
 log.info """\
     SHORTREAD - WGS _ W F   P I P E L I N E
@@ -92,34 +94,52 @@ workflow {
     SAMTOOLS_INDEX(
         PICARD_MARKDUPLICATES.out.bam
     )
-    // Run DeepVariant
-    DEEPVARIANT_RUNDEEPVARIANT(
+    // Run BAM QC to collect metrics
+    PICARD_COLLECT_MULTIPLE_METRICS(
         SAMTOOLS_INDEX.out.bam,
         ch_fasta
     )
-    // Run ExpansionHunter
+    PICARD_COLLECT_WGS_METRICS(
+        SAMTOOLS_INDEX.out.bam,
+        ch_fasta
+    )
+    QUALIMAP_BAMQC(
+        SAMTOOLS_INDEX.out.bam
+    )   
+    MULTIQC(
+        FASTP.out.html,
+        FASTP.out.json,
+        PICARD_COLLECT_MULTIPLE_METRICS.out.metrics_files,
+        PICARD_COLLECT_WGS_METRICS.out.wgs_metrics,
+        QUALIMAP_BAMQC.out.results
+    )
+    
+    // Run variant calling
+    // DEEPVARIANT_RUNDEEPVARIANT(
+    //     SAMTOOLS_INDEX.out.bam,
+    //     ch_fasta
+    // )
+    // Run repeats calling
     EXPANSIONHUNTER(
         SAMTOOLS_INDEX.out.bam,
         ch_fasta,
         params.variant_catalog
     )
-    // Run Manta
-    MANTA_GERMLINE(
-        SAMTOOLS_INDEX.out.bam,
-        ch_fasta
-    )
-    // Run CNVpytor
-    CNVPYTOR(
-        SAMTOOLS_INDEX.out.bam,
-        ch_fasta
-    )
-    // Run ExpansionHunterDenovo
     EXPANSIONHUNTERDENOVO_PROFILE(
         SAMTOOLS_INDEX.out.bam,
         ch_fasta,
         params.min_anchor_mapq,
         params.max_irr_mapq
     )
+    // Run SV/CNV calling
+    MANTA_GERMLINE(
+        SAMTOOLS_INDEX.out.bam,
+        ch_fasta
+    )
+    CNVPYTOR(
+        SAMTOOLS_INDEX.out.bam,
+        ch_fasta
+    )  
     // Convert BAM to CRAM
     SAMTOOLS_BAM2CRAM(
         SAMTOOLS_INDEX.out.bam,

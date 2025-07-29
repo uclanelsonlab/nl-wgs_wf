@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - DeepVariant SNV/indel calling module (commented out)
 - BAM to CRAM conversion module
 - FASTP quality control and adapter trimming module
+- MultiQC quality control report aggregation
+- Qualimap BAM quality control
+- Picard CollectMultipleMetrics and CollectWgsMetrics
 - S3 support for input/output files
 - Docker container support for all tools
 - Comprehensive error handling and validation
@@ -43,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Process output file naming consistency
 - FASTP module output paths and workflow integration
 - Missing expansionhunterdenovo Docker parameter
+- QUALIMAP_BAMQC output directory capture and MULTIQC integration
 
 ### Technical Details
 
@@ -50,12 +54,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BWAMEM2_MEM**: Added read group information, optimized memory usage
 - **SAMTOOLS_SORT**: Added memory limits and temporary directory support
 - **PICARD_MARKDUPLICATES**: Updated to handle new input format
+- **PICARD_COLLECT_MULTIPLE_METRICS**: Added comprehensive BAM metrics collection
+- **PICARD_COLLECT_WGS_METRICS**: Added whole genome sequencing metrics
 - **SAMTOOLS_INDEX**: Added as separate process for BAM indexing
 - **CNVPYTOR**: Fixed variable references and added error handling
 - **EXPANSIONHUNTER**: Updated input/output structure
 - **MANTA_GERMLINE**: Enhanced with proper reference handling
 - **EXPANSIONHUNTERDENOVO_PROFILE**: Added parameter validation
 - **FASTP**: Fixed output paths, added cleaned FASTQ outputs, integrated with workflow
+- **QUALIMAP_BAMQC**: Added BAM quality control analysis
+- **MULTIQC**: Added QC report aggregation from all tools
 
 #### Configuration Changes
 - Added S3 configuration for cloud execution
