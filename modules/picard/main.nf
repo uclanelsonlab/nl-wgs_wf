@@ -3,7 +3,7 @@ process PICARD_MARKDUPLICATES {
     label 'picard_markduplicates'
 
     input:
-        tuple val(meta), path(reads)
+        tuple val(meta), path(reads), path(reads_index)
         tuple val(meta2), path(fasta_files)
 
     output:
