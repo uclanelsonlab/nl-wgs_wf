@@ -120,29 +120,29 @@ workflow {
     //     ch_fasta
     // )
     // Run repeats calling
-    EXPANSIONHUNTER(
-        SAMTOOLS_INDEX.out.bam,
-        ch_fasta,
-        params.variant_catalog
-    )
-    EXPANSIONHUNTERDENOVO_PROFILE(
-        SAMTOOLS_INDEX.out.bam,
-        ch_fasta,
-        params.min_anchor_mapq,
-        params.max_irr_mapq
-    )
+    // EXPANSIONHUNTER(
+    //     SAMTOOLS_INDEX.out.bam,
+    //     ch_fasta,
+    //     params.variant_catalog
+    // )
+    // EXPANSIONHUNTERDENOVO_PROFILE(
+    //     SAMTOOLS_INDEX.out.bam,
+    //     ch_fasta,
+    //     params.min_anchor_mapq,
+    //     params.max_irr_mapq
+    // )
     // Run SV/CNV calling
-    MANTA_GERMLINE(
-        SAMTOOLS_INDEX.out.bam,
-        ch_fasta
-    )
-    CNVPYTOR(
-        SAMTOOLS_INDEX.out.bam,
-        ch_fasta
-    )  
+    // MANTA_GERMLINE(
+    //     SAMTOOLS_INDEX.out.bam,
+    //     ch_fasta
+    // )
+    // CNVPYTOR(
+    //     SAMTOOLS_INDEX.out.bam,
+    //     ch_fasta
+    // )  
     // Convert BAM to CRAM
-    SAMTOOLS_BAM2CRAM(
-        SAMTOOLS_INDEX.out.bam,
-        ch_fasta
-    )
+    // SAMTOOLS_BAM2CRAM(
+    //     SAMTOOLS_INDEX.out.bam,
+    //     ch_fasta
+    // )
 }
