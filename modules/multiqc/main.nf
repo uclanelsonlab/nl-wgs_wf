@@ -12,7 +12,6 @@ process MULTIQC {
     output:
         tuple val(meta), path("*multiqc_report.html"), emit: report
         tuple val(meta), path("*_data")              , emit: data
-        tuple val(meta), path("*_plots")             , emit: plots
         path "multiqc_versions.yml"                  , emit: versions
     
     script:
