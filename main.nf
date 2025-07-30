@@ -120,6 +120,10 @@ workflow {
         SAMTOOLS_INDEX.out.bam,
         ch_fasta
     )
+    AUTOMAP(
+        DEEPVARIANT_RUNDEEPVARIANT.out.vcf,
+        params.genome
+    )
     // Run repeats calling
     // EXPANSIONHUNTER(
     //     SAMTOOLS_INDEX.out.bam,

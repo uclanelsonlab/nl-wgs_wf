@@ -7,8 +7,8 @@ process AUTOMAP {
         val genome
     
     output:
-        tuple val(meta), path("*.cram"), path("*.crai"), emit: cram
-        path  "automap_versions.yml", emit: versions
+        tuple val(meta), path("*.HomRegions.tsv"), path("*.HomRegions.pdf") , emit: homregions
+        path  "automap_versions.yml"                                        , emit: versions
 
     script:
         def prefix = task.ext.prefix ?: "${meta.id}"

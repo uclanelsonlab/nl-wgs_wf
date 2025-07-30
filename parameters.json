@@ -23,6 +23,9 @@
     "multiqc_docker": {
         "description": "Docker image for MultiQC"
     },
+    "automap_docker": {
+        "description": "Docker image for Automap"
+    },
     "fasta": {
         "description": "Reference genome fasta file"
     },
@@ -64,5 +67,8 @@
     },
     "qualimap_docker": {
         "description": "Docker image for Qualimap"
+    },
+    "genome": {
+        "description": "Genome"
     }
 }

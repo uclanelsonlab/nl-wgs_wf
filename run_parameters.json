@@ -9,6 +9,7 @@
     "multiqc_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/multiqc:1.30--pyhdfd78af_0",
     "qualimap_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/qualimap:2.3--hdfd78af_0",
     "fastp_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/fastp:1.0.1--heae3180_0",
+    "automap_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/automap:v1.3",
     "fasta": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.fa",
     "fai": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/hg38.fa.fai",
     "fasta_0123": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.fa.0123",
@@ -21,5 +22,6 @@
     "sample_name": "NA12878",
     "variant_catalog": "s3://ucla-rare-diseases/aws-healthomics-pipelines/assets/expansionhunter/hg38/variant_catalog.json",
     "min_anchor_mapq": 50,
-    "max_irr_mapq": 40
+    "max_irr_mapq": 40,
+    "genome": "hg38"
 }
