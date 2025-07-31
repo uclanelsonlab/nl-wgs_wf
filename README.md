@@ -4,12 +4,14 @@ A comprehensive Nextflow pipeline for whole genome sequencing (WGS) analysis of 
 
 ## Overview
 
-This pipeline performs end-to-end analysis of whole genome sequencing data, including alignment, variant calling, structural variant detection, and repeat expansion analysis. It's designed for germline samples and supports both local and cloud execution.
+This pipeline performs end-to-end analysis of whole genome sequencing data, including quality control, alignment, variant calling, structural variant detection, and repeat expansion analysis. It's designed for germline samples and supports both local and cloud execution.
 
 ## Features
 
+- **Quality Control**: FASTP for adapter trimming and quality control
 - **BWA-MEM2 Alignment**: Fast and accurate read alignment
-- **Quality Control**: BAM sorting, indexing, and duplicate marking
+- **BAM Processing**: Sorting, indexing, duplicate marking, and format conversion
+- **Quality Assessment**: MultiQC report aggregation, Qualimap BAM QC, Picard metrics
 - **Variant Calling**: SNV/indel detection with DeepVariant
 - **Structural Variants**: Detection with Manta
 - **Copy Number Variants**: Analysis with CNVpytor
@@ -22,58 +24,80 @@ This pipeline performs end-to-end analysis of whole genome sequencing data, incl
 
 ```mermaid
 graph TD
-    A[FASTQ R1/R2] --> B[BWAMEM2_MEM]
-    C[Reference FASTA] --> B
-    D[BWA Index Files] --> B
+    A[FASTQ R1/R2] --> B[FASTP]
+    B --> C[BWAMEM2_MEM]
+    D[Reference FASTA] --> C
+    E[BWA Index Files] --> C
     
-    B --> E[SAMTOOLS_SORT]
-    E --> F[PICARD_MARKDUPLICATES]
-    F --> G[SAMTOOLS_INDEX]
+    C --> F[SAMTOOLS_SORT]
+    F --> G[PICARD_MARKDUPLICATES]
+    G --> H[SAMTOOLS_INDEX]
     
-    G --> H[EXPANSIONHUNTER]
-    G --> I[MANTA_GERMLINE]
-    G --> J[CNVPYTOR]
-    G --> K[EXPANSIONHUNTERDENOVO_PROFILE]
-    G --> L[SAMTOOLS_BAM2CRAM]
+    H --> I[PICARD_COLLECT_MULTIPLE_METRICS]
+    H --> J[PICARD_COLLECT_WGS_METRICS]
+    H --> K[QUALIMAP_BAMQC]
     
-    M[Variant Catalog] --> H
-    N[Min Anchor MapQ] --> K
-    O[Max IRR MapQ] --> K
+    B --> L[MULTIQC]
+    I --> L
+    J --> L
+    K --> L
+    
+    H --> M[EXPANSIONHUNTER]
+    H --> N[MANTA_GERMLINE]
+    H --> O[CNVPYTOR]
+    H --> P[EXPANSIONHUNTERDENOVO_PROFILE]
+    H --> Q[SAMTOOLS_BAM2CRAM]
+    
+    R[Variant Catalog] --> M
+    S[Min Anchor MapQ] --> P
+    T[Max IRR MapQ] --> P
     
     subgraph "Input Data"
         A
-        C
         D
-        M
-        N
-        O
+        E
+        R
+        S
+        T
     end
     
-    subgraph "Alignment & QC"
+    subgraph "Quality Control"
         B
-        E
+    end
+    
+    subgraph "Alignment & Processing"
+        C
         F
         G
+        H
     end
     
-    subgraph "Variant Analysis"
-        H
+    subgraph "Quality Assessment"
         I
         J
         K
-    end
-    
-    subgraph "Output Formats"
         L
     end
     
+    subgraph "Variant Analysis"
+        M
+        N
+        O
+        P
+    end
+    
+    subgraph "Output Formats"
+        Q
+    end
+    
     style A fill:#e1f5fe
-    style C fill:#e1f5fe
     style D fill:#e1f5fe
-    style M fill:#e1f5fe
-    style N fill:#e1f5fe
-    style O fill:#e1f5fe
-    style L fill:#c8e6c9
+    style E fill:#e1f5fe
+    style R fill:#e1f5fe
+    style S fill:#e1f5fe
+    style T fill:#e1f5fe
+    style L fill:#fff3e0
+    style Q fill:#c8e6c9
 ```
 
 ## Quick Start
@@ -124,12 +148,18 @@ nextflow run main.nf \
 ```
 outdir/
 ├── hg38/
+│   ├── QC/
+│   │   ├── *_fastp.html
+│   │   ├── *_fastp.json
+│   │   ├── *_multiqc_report.html
+│   │   ├── *_multiqc_data/
+│   │   ├── *.metrics
+│   │   ├── *.wgs_metrics
+│   │   └── *_bamqc/
 │   ├── ALIGNMENT/
 │   │   ├── *.sorted.bam
 │   │   ├── *.MarkDuplicates.bam
 │   │   └── *.cram
-│   ├── BWA_SAMTOOLS/
-│   │   └── *.bam
 │   ├── SNV/
 │   │   ├── *.deepvariant.vcf.gz
 │   │   └── *.deepvariant.gvcf.gz
@@ -144,11 +174,20 @@ outdir/
 
 ## Processes
 
+### Quality Control
+- **FASTP**: Adapter trimming, quality filtering, and QC reports
+
 ### Core Alignment
 - **BWAMEM2_MEM**: BWA-MEM2 alignment with read group information
 - **SAMTOOLS_SORT**: BAM file sorting and indexing
 - **PICARD_MARKDUPLICATES**: Duplicate marking and removal
 - **SAMTOOLS_INDEX**: BAM indexing for downstream tools
+
+### Quality Assessment
+- **PICARD_COLLECT_MULTIPLE_METRICS**: Comprehensive BAM metrics collection
+- **PICARD_COLLECT_WGS_METRICS**: Whole genome sequencing metrics
+- **QUALIMAP_BAMQC**: BAM quality control analysis
+- **MULTIQC**: QC report aggregation from all tools
 
 ### Variant Analysis
 - **DEEPVARIANT_RUNDEEPVARIANT**: SNV/indel calling (commented out)
@@ -166,23 +205,32 @@ outdir/
 
 The pipeline uses the following Docker images (configure in `nextflow.config`):
 
+- `fastp_docker`: FASTP quality control
 - `bwa_docker`: BWA-MEM2 and Samtools
 - `picard_docker`: Picard tools
+- `qualimap_docker`: Qualimap BAM QC
+- `multiqc_docker`: MultiQC report generation
 - `deepvariant_docker`: DeepVariant
 - `manta_docker`: Manta
 - `expansionhunter_docker`: ExpansionHunter
 - `expansionhunterdenovo_docker`: ExpansionHunterDenovo
+- `cnvpytor_docker`: CNVpytor
 
 ### Resource Requirements
 
 | Process | Memory | CPUs |
 |---------|--------|------|
+| FASTP | 16 GB | 8 |
 | BWAMEM2_MEM | 32 GB | 16 |
 | SAMTOOLS_SORT | 16 GB | 8 |
 | PICARD_MARKDUPLICATES | 32 GB | 16 |
-| MANTA_GERMLINE | 32 GB | 16 |
-| EXPANSIONHUNTER | 32 GB | 16 |
-| CNVPYTOR | 16 GB | 8 |
+| PICARD_COLLECT_MULTIPLE_METRICS | 16 GB | 8 |
+| PICARD_COLLECT_WGS_METRICS | 16 GB | 8 |
+| QUALIMAP_BAMQC | 16 GB | 8 |
+| MULTIQC | 4 GB | 4 |
+| MANTA_GERMLINE | 16 GB | 8 |
+| EXPANSIONHUNTER | 16 GB | 8 |
+| CNVPYTOR | 32 GB | 16 |
 
 ## Dependencies
 
@@ -224,6 +272,12 @@ This creates:
    ```
    **Solution**: Increase memory allocation in `nextflow.config`
 
+4. **MULTIQC No Files Found**
+   ```
+   No analysis results found. MultiQC will now exit.
+   ```
+   **Solution**: Check that upstream QC processes completed successfully
+
 ### Log Files
 
 Check the `.nextflow.log` file for detailed execution logs and error messages.
@@ -234,6 +288,8 @@ If you use this pipeline in your research, please cite:
 
 - Nextflow: Di Tommaso, P. et al. (2017). Nextflow enables reproducible computational workflows. Nature Biotechnology, 35(4), 316-319.
 - BWA-MEM2: Vasimuddin, M. et al. (2019). Efficient architecture-aware acceleration of BWA-MEM for multicore systems. IEEE IPDPS.
+- FASTP: Chen, S. et al. (2018). fastp: an ultra-fast all-in-one FASTQ preprocessor. Bioinformatics, 34(17), i884-i890.
+- MultiQC: Ewels, P. et al. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics, 32(19), 3047-3048.
 - DeepVariant: Poplin, R. et al. (2018). A universal SNP and small-indel variant caller using deep neural networks. Nature Biotechnology, 36(10), 983-987.
 
 ## License

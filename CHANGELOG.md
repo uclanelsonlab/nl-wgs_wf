@@ -34,6 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced input/output channel handling for better data flow
 - Updated process configurations for better resource management
 - Refined error messages and validation checks
+- Updated workflow architecture to include quality control and assessment steps
+- Improved output directory structure with dedicated QC folder
 
 ### Fixed
 - Syntax errors in all module files
@@ -47,11 +49,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FASTP module output paths and workflow integration
 - Missing expansionhunterdenovo Docker parameter
 - QUALIMAP_BAMQC output directory capture and MULTIQC integration
+- BWA-MEM2 FASTQ input handling and pipeline integration
+- Nextflow configuration parsing errors (unquoted strings)
+- publishDir configuration syntax (removed closures)
+- MULTIQC input channel structure and metadata handling
 
 ### Technical Details
 
 #### Process Updates
-- **BWAMEM2_MEM**: Added read group information, optimized memory usage
+- **BWAMEM2_MEM**: Added read group information, optimized memory usage, fixed FASTQ input handling
 - **SAMTOOLS_SORT**: Added memory limits and temporary directory support
 - **PICARD_MARKDUPLICATES**: Updated to handle new input format
 - **PICARD_COLLECT_MULTIPLE_METRICS**: Added comprehensive BAM metrics collection
@@ -67,16 +73,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Configuration Changes
 - Added S3 configuration for cloud execution
-- Updated Docker image parameters
+- Updated Docker image parameters for all tools
 - Added memory and CPU resource allocations
 - Implemented process-specific configurations
 - Added parameter validation and defaults
+- Fixed configuration parsing issues
+- Corrected publishDir syntax for all processes
 
 #### File Structure
 - Organized modules in separate directories
 - Standardized process naming conventions
 - Added version tracking for all tools
 - Implemented consistent output file naming
+- Updated output directory structure with QC folder
 
 ## [0.1.0] - 2025-07-24
 
@@ -91,6 +100,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Memory allocation issues with large datasets
 - S3 file access requires proper AWS configuration
 - CNVPYTOR requires reference genome resource files
+- Configuration parsing errors with unquoted strings
+- BWA-MEM2 input handling issues
+- MULTIQC integration challenges
 
 ### Dependencies
 - Nextflow 22.04.0+
@@ -124,18 +136,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated input/output channel structures
 - Changed process parameter names
 - Modified Docker image configurations
+- Added new quality control and assessment processes
 
 #### Required Updates
 1. Update `nextflow.config` with new parameter definitions
 2. Generate BWA-MEM2 index files for reference genome
 3. Configure AWS credentials for S3 access
 4. Update Docker image references
+5. Ensure all string parameters are properly quoted
 
 #### New Features
 - S3 file support
 - Memory optimization
 - Enhanced error handling
 - Comprehensive documentation
+- Quality control pipeline integration
+- MultiQC report generation
+- BAM quality assessment tools
 
 ---
 
