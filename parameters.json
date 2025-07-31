@@ -64,5 +64,8 @@
     },
     "qualimap_docker": {
         "description": "Docker image for Qualimap"
+    },
+    "genome": {
+        "description": "Genome"
     }
 }

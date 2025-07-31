@@ -6,7 +6,7 @@ process QUALIMAP_BAMQC {
         tuple val(meta), path(bam), path(bam_index)
 
     output:
-        tuple val(meta), path("*")  , emit: results
+        tuple val(meta), path("${meta.id}*")  , emit: results
         path "qualimap_versions.yml", emit: versions
 
     when:

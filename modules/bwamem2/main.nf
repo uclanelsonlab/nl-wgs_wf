@@ -19,6 +19,11 @@ process BWAMEM2_MEM {
         def total_mem = task.memory.toGiga() as Double
         def mem_per_thread = Math.max(1.0, (total_mem * 0.6) / (task.cpus as Double)) as Integer
         def fasta = fasta_files[0]  // First file is the FASTA
+        def fastq_r1 = reads[0]  // First file is R1
+        def fastq_r2 = reads[1]  // Second file is R2
+        
+        // Calculate optimal thread distribution
+        def samtools_threads = Math.max(1, Math.min(4, (task.cpus / 4) as Integer))
 
         """
         INDEX=\$(find -L ./ -name "*.amb" | sed 's/\\.amb\$//')
@@ -28,10 +33,7 @@ process BWAMEM2_MEM {
             -M \\
             -R "@RG\\tID:${prefix}\\tCN:CN\\tLB:${prefix}\\tPL:ILLUMINA\\tPU:${prefix}\\tSM:${prefix}" \\
             \$INDEX \\
-            ${reads} | \\
-        samtools view \\
-            -@ ${task.cpus} \\
-            -S -b > ${prefix}.bam
+            ${fastq_r1} ${fastq_r2} | samtools view -@ ${samtools_threads} -S -b -o ${prefix}.bam -
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
@@ -43,8 +45,7 @@ process BWAMEM2_MEM {
     stub:
         def prefix = task.ext.prefix ?: "${meta.id}"
         """
-        touch ${prefix}.sorted.bam
-        touch ${prefix}.sorted.bam.bai
+        touch ${prefix}.bam
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":

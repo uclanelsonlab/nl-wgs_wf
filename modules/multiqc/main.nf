@@ -6,8 +6,8 @@ process MULTIQC {
         path fastp_html 
         path fastp_json 
         tuple val(meta), path(metrics_files)
-        tuple val(meta), path(wgs_metrics)
-        tuple val(meta), path(qualimap_results)
+        tuple val(meta2), path(wgs_metrics)
+        tuple val(meta3), path(qualimap_results)
     
     output:
         tuple val(meta), path("*multiqc_report.html"), emit: report
@@ -17,9 +17,21 @@ process MULTIQC {
     script:
         def prefix = task.ext.prefix ?: "${meta.id}"
         """
-        multiqc . \
-            --filename ${prefix}_multiqc_report.html \
-            --outdir .
+        # Debug: List all files in current directory
+        echo "Files in current directory:"
+        ls -la
+        
+        echo "Input files:"
+        echo "FASTP HTML: ${fastp_html}"
+        echo "FASTP JSON: ${fastp_json}"
+        echo "Metrics files: ${metrics_files}"
+        echo "WGS metrics: ${wgs_metrics}"
+        echo "Qualimap results: ${qualimap_results}"
+        
+        multiqc . \\
+            --filename ${prefix}_multiqc_report.html \\
+            --outdir . \\
+            --verbose
 
         cat <<-END_VERSIONS > multiqc_versions.yml
         "${task.process}":
@@ -31,10 +43,9 @@ process MULTIQC {
         def prefix = task.ext.prefix ?: "${meta.id}"
         """
         mkdir multiqc_data
-        mkdir multiqc_plots
-        touch multiqc_report.html
+        touch ${prefix}_multiqc_report.html
 
-        cat <<-END_VERSIONS > versions.yml
+        cat <<-END_VERSIONS > multiqc_versions.yml
         "${task.process}":
             multiqc: \$( multiqc --version | sed -e "s/multiqc, version //g" )
         END_VERSIONS
