@@ -140,11 +140,6 @@ rm nl-wgs_wf.zip; zip -r nl-wgs_wf.zip *
 | `--fastq_r2` | Reverse reads FASTQ file | `sample_R2.fastq.gz` |
 | `--fasta` | Reference genome FASTA | `hg38.fa` |
 | `--fai` | FASTA index file | `hg38.fa.fai` |
-
-### Optional Parameters
-
-| Parameter | Description | Default |
-|-----------|-------------|---------|
 | `--sample_name` | Sample identifier | File basename |
 | `--variant_catalog` | ExpansionHunter variant catalog | `null` |
 | `--min_anchor_mapq` | Min anchor mapping quality | `null` |
@@ -156,28 +151,48 @@ rm nl-wgs_wf.zip; zip -r nl-wgs_wf.zip *
 ```
 outdir/
 ├── hg38/
-│   ├── QC/
-│   │   ├── *_fastp.html
-│   │   ├── *_fastp.json
-│   │   ├── *_multiqc_report.html
-│   │   ├── *_multiqc_data/
-│   │   ├── *.metrics
-│   │   ├── *.wgs_metrics
-│   │   └── *_bamqc/
-│   ├── ALIGNMENT/
-│   │   ├── *.sorted.bam
-│   │   ├── *.MarkDuplicates.bam
-│   │   └── *.cram
-│   ├── SNV/
-│   │   ├── *.deepvariant.vcf.gz
-│   │   └── *.deepvariant.gvcf.gz
-│   ├── SV/
-│   │   ├── *.candidate_sv.vcf.gz
-│   │   └── *.diploid_sv.vcf.gz
-│   └── REPEATS/
-│       ├── *.vcf.gz
-│       ├── *.json.gz
-│       └── *.locus.tsv
+│   ├── QC/                                    # Quality Control Reports
+│   │   ├── *_fastp.html                      # FASTP HTML report
+│   │   ├── *_fastp.json                      # FASTP JSON metrics
+│   │   ├── *_multiqc_report.html             # MultiQC aggregated report
+│   │   ├── *_multiqc_data/                   # MultiQC data files
+│   │   ├── *.metrics                         # Picard multiple metrics
+│   │   ├── *.wgs_metrics                     # Picard WGS metrics
+│   │   └── *_bamqc/                          # Qualimap BAM QC results
+│   ├── ALIGNMENT/                            # Alignment Files
+│   │   ├── *.cram                            # CRAM format files
+│   │   ├── *.crai                            # CRAM index files
+│   │   └── *.yml                             # Process version files
+│   ├── SNV/                                  # Single Nucleotide Variants
+│   │   ├── *.deepvariant.vcf.gz              # DeepVariant VCF output
+│   │   ├── *.deepvariant.vcf.gz.tbi          # VCF index files
+│   │   ├── *.deepvariant.gvcf.gz             # DeepVariant gVCF output
+│   │   ├── *.deepvariant.gvcf.gz.tbi         # gVCF index files
+│   │   └── *.yml                             # Process version files
+│   ├── SV/                                   # Structural Variants
+│   │   ├── *.candidate_small_indels.vcf.gz   # Manta small indel candidates
+│   │   ├── *.candidate_small_indels.vcf.gz.tbi
+│   │   ├── *.candidate_sv.vcf.gz             # Manta SV candidates
+│   │   ├── *.candidate_sv.vcf.gz.tbi
+│   │   ├── *.diploid_sv.vcf.gz               # Manta diploid SVs
+│   │   ├── *.diploid_sv.vcf.gz.tbi
+│   │   ├── *.pytor                           # CNVpytor data files
+│   │   ├── *1000.vcf                         # CNVpytor VCF output
+│   │   ├── *filtered.vcf                     # CNVpytor filtered VCF
+│   │   ├── *manhattan_plot.png               # CNVpytor Manhattan plot
+│   │   └── *.yml                             # Process version files
+│   ├── REPEATS/                              # Repeat Expansion Analysis
+│   │   ├── *.vcf.gz                          # ExpansionHunter VCF
+│   │   ├── *.json.gz                         # ExpansionHunter JSON
+│   │   ├── *_realigned.bam                   # ExpansionHunter realigned BAM
+│   │   ├── *.locus.tsv                       # ExpansionHunterDenovo locus data
+│   │   ├── *.motif.tsv                       # ExpansionHunterDenovo motif data
+│   │   ├── *.str_profile.json                # ExpansionHunterDenovo STR profile
+│   │   └── *.yml                             # Process version files
+│   └── ROH/                                  # Runs of Homozygosity
+│       ├── */*.HomRegions.tsv                # AutoMap homozygosity regions
+│       ├── */*.HomRegions.pdf                # AutoMap homozygosity plots
+│       └── *.yml                             # Process version files
 ```
 
 ## Processes
@@ -198,7 +213,8 @@ outdir/
 - **MULTIQC**: QC report aggregation from all tools
 
 ### Variant Analysis
-- **DEEPVARIANT_RUNDEEPVARIANT**: SNV/indel calling (commented out)
+- **DEEPVARIANT_RUNDEEPVARIANT**: SNV/indel calling with DeepVariant
+- **AUTOMAP**: Variant annotation and runs of homozygosity detection
 - **MANTA_GERMLINE**: Structural variant detection
 - **CNVPYTOR**: Copy number variant analysis
 - **EXPANSIONHUNTER**: Repeat expansion detection
@@ -219,6 +235,7 @@ The pipeline uses the following Docker images (configure in `nextflow.config`):
 - `qualimap_docker`: Qualimap BAM QC
 - `multiqc_docker`: MultiQC report generation
 - `deepvariant_docker`: DeepVariant
+- `automap_docker`: AutoMap variant annotation
 - `manta_docker`: Manta
 - `expansionhunter_docker`: ExpansionHunter
 - `expansionhunterdenovo_docker`: ExpansionHunterDenovo
@@ -236,8 +253,11 @@ The pipeline uses the following Docker images (configure in `nextflow.config`):
 | PICARD_COLLECT_WGS_METRICS | 16 GB | 8 |
 | QUALIMAP_BAMQC | 16 GB | 8 |
 | MULTIQC | 4 GB | 4 |
+| DEEPVARIANT_RUNDEEPVARIANT | 192 GB | 48 |
+| AUTOMAP | 16 GB | 8 |
 | MANTA_GERMLINE | 16 GB | 8 |
 | EXPANSIONHUNTER | 16 GB | 8 |
+| EXPANSIONHUNTERDENOVO_PROFILE | 16 GB | 8 |
 | CNVPYTOR | 32 GB | 16 |
 
 ## Dependencies
