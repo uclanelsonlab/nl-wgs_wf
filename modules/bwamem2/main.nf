@@ -9,7 +9,7 @@ process BWAMEM2_MEM {
         
     output:
         tuple val(meta), path("*.bam"), emit: bam
-        path  "versions.yml", emit: versions
+        path  "*versions.yml", emit: versions
 
     when:
         task.ext.when == null || task.ext.when
@@ -35,7 +35,7 @@ process BWAMEM2_MEM {
             \$INDEX \\
             ${fastq_r1} ${fastq_r2} | samtools view -@ ${samtools_threads} -S -b -o ${prefix}.bam -
 
-        cat <<-END_VERSIONS > versions.yml
+        cat <<-END_VERSIONS > bwa_versions.yml
         "${task.process}":
             bwamem2: \$(echo \$(bwa-mem2 version 2>&1) | sed 's/.* //')
             samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
@@ -47,7 +47,7 @@ process BWAMEM2_MEM {
         """
         touch ${prefix}.bam
 
-        cat <<-END_VERSIONS > versions.yml
+        cat <<-END_VERSIONS > bwa_versions.yml
         "${task.process}":
             bwamem2: \$(echo \$(bwa-mem2 version 2>&1) | sed 's/.* //')
             samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')

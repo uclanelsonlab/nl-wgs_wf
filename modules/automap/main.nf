@@ -7,15 +7,15 @@ process AUTOMAP {
         val genome
     
     output:
-        tuple val(meta), path("*.HomRegions.tsv"), path("*.HomRegions.pdf") , emit: homregions
-        path  "automap_versions.yml"                                        , emit: versions
+        tuple val(meta), path("*/*.HomRegions.tsv"), path("*/*.HomRegions.pdf") , emit: homregions
+        path  "automap_versions.yml"                                            , emit: versions
 
     script:
         def prefix = task.ext.prefix ?: "${meta.id}"
         def VERSION = "1.3"
         """
-        bgzip ${vcf}
-        AutoMap_v1.3.sh --vcf ${prefix}.deepvariant.vcf --out . --genome ${genome} --id ${prefix}
+        zcat ${vcf} > ${prefix}.vcf
+        AutoMap_v1.3.sh --vcf ${prefix}.vcf --out . --genome ${genome} --id ${prefix}
 
         cat <<-END_VERSIONS > automap_versions.yml
         "${task.process}":
