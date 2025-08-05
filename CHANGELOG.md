@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Planned
+- Performance optimizations for large-scale datasets
+- Additional variant calling tools integration
+- Enhanced reporting and visualization features
+- Support for additional cloud platforms
+
+## [1.0.0] - 2025-01-XX
+
 ### Added
 - Initial pipeline development
 - BWA-MEM2 alignment module
@@ -16,7 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CNVpytor copy number variant analysis module
 - ExpansionHunter repeat expansion detection module
 - ExpansionHunterDenovo de novo repeat detection module
-- DeepVariant SNV/indel calling module (commented out)
+- DeepVariant SNV/indel calling module
+- AutoMap variant annotation module
 - BAM to CRAM conversion module
 - FASTP quality control and adapter trimming module
 - MultiQC quality control report aggregation
@@ -27,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive error handling and validation
 - Memory optimization for large datasets
 - Mermaid architecture diagram in README
+- Complete documentation and usage examples
 
 ### Changed
 - Updated BWA-MEM2 process to use optimized memory allocation
@@ -70,6 +80,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **FASTP**: Fixed output paths, added cleaned FASTQ outputs, integrated with workflow
 - **QUALIMAP_BAMQC**: Added BAM quality control analysis
 - **MULTIQC**: Added QC report aggregation from all tools
+- **DEEPVARIANT_RUNDEEPVARIANT**: Integrated SNV/indel calling
+- **AUTOMAP**: Added variant annotation capabilities
 
 #### Configuration Changes
 - Added S3 configuration for cloud execution
@@ -114,25 +126,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+### Version 1.0.0
+- **Date**: 2025-01-XX
+- **Status**: Production Ready
+- **Features**: Complete WGS analysis pipeline with all major components
+- **Breaking Changes**: None from 0.1.0 (complete rewrite)
+
 ### Version 0.1.0
 - **Date**: 2025-07-24
 - **Status**: Development
 - **Features**: Core pipeline functionality
 - **Known Issues**: Several syntax and configuration issues
 
-### Unreleased
-- **Date**: Ongoing
-- **Status**: Active Development
-- **Features**: Comprehensive fixes and improvements
-- **Target**: Production-ready pipeline
-
 ---
 
 ## Migration Guide
 
-### From Version 0.1.0 to Current
+### From Version 0.1.0 to 1.0.0
 
 #### Breaking Changes
+- Complete pipeline rewrite with new architecture
 - Updated input/output channel structures
 - Changed process parameter names
 - Modified Docker image configurations
@@ -153,6 +166,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Quality control pipeline integration
 - MultiQC report generation
 - BAM quality assessment tools
+- Complete variant analysis suite
 
 ---
 
