@@ -7,33 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### HPC Branch Development
+- HPC-optimized resource allocation and configuration
+- Local ECR registry integration for faster container access
+- Streamlined workflow focusing on core analysis components
+- Test data integration with NA12878 sample
+- Cluster-friendly configuration for SLURM/PBS schedulers
+- Reduced memory and CPU requirements for HPC environments
+
 ### Added
 - Initial pipeline development
 - BWA-MEM2 alignment module
 - Samtools sorting and indexing modules
 - Picard MarkDuplicates module
-- Manta structural variant calling module
-- CNVpytor copy number variant analysis module
-- ExpansionHunter repeat expansion detection module
-- ExpansionHunterDenovo de novo repeat detection module
-- DeepVariant SNV/indel calling module (commented out)
-- BAM to CRAM conversion module
 - FASTP quality control and adapter trimming module
 - MultiQC quality control report aggregation
 - Qualimap BAM quality control
 - Picard CollectMultipleMetrics and CollectWgsMetrics
-- S3 support for input/output files
+- DeepVariant SNV/indel calling module
+- AutoMap variant annotation module
 - Docker container support for all tools
 - Comprehensive error handling and validation
-- Memory optimization for large datasets
+- Memory optimization for HPC environments
 - Mermaid architecture diagram in README
 
 ### Changed
-- Updated BWA-MEM2 process to use optimized memory allocation
+- Updated BWA-MEM2 process to use HPC-optimized memory allocation (32GB/16CPUs)
 - Improved samtools sort command with memory limits
 - Enhanced input/output channel handling for better data flow
-- Updated process configurations for better resource management
+- Updated process configurations for HPC resource management
 - Refined error messages and validation checks
+- Streamlined workflow by commenting out non-essential processes (SV, CNV, repeats)
+- Updated Docker image paths to use local ECR registry
+- Changed output directory to `results/` for HPC environments
 
 ### Fixed
 - Syntax errors in all module files
@@ -77,6 +83,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Standardized process naming conventions
 - Added version tracking for all tools
 - Implemented consistent output file naming
+
+#### HPC-Specific Changes
+- **Docker Configuration**: Added `docker.runOptions = '-u $(id -u):$(id -g)'` for HPC user permissions
+- **Conda Integration**: Enabled conda for additional tool support
+- **Scratch Directory**: Enabled scratch for temporary file management
+- **Module Binaries**: Enabled module binaries for better HPC compatibility
+- **Test Data**: Pre-configured with NA12878 sample data paths
+- **Resource Optimization**: Reduced memory requirements across all processes
+
+## [1.0.0-HPC] - 2025-01-27
+
+### Added
+- HPC-optimized version of the pipeline
+- Local ECR registry integration
+- Test data integration with NA12878 sample
+- Streamlined workflow focusing on core analysis
+- Cluster-friendly resource allocation
+
+### Changed
+- Reduced memory requirements for HPC environments
+- Updated Docker image paths to ECR registry
+- Streamlined workflow by removing non-essential processes
+- Optimized for SLURM/PBS schedulers
+
+### Technical Details
+- **Memory Optimization**: Reduced from 192GB to 32GB for DeepVariant
+- **CPU Optimization**: Reduced from 48 to 16 CPUs for most processes
+- **Container Registry**: Uses `224597534425.dkr.ecr.us-west-2.amazonaws.com`
+- **Test Sample**: NA12878 with ERR3239334 paired-end reads
+- **Output Directory**: Changed to `results/` for HPC compatibility
 
 ## [0.1.0] - 2025-07-24
 
