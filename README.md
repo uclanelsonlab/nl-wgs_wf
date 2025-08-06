@@ -164,15 +164,34 @@ results/
 │   │   ├── *.wgs_metrics                     # Picard WGS metrics
 │   │   └── *_bamqc/                          # Qualimap BAM QC results
 │   ├── ALIGNMENT/                            # Alignment Files
-│   │   ├── *.sorted.bam                      # Sorted BAM files
-│   │   ├── *.MarkDuplicates.bam              # Duplicate-marked BAM files
-│   │   ├── *.bam.bai                         # BAM index files
+│   │   ├── *.cram                            # CRAM format files
+│   │   ├── *.cram.crai                       # CRAM index files
 │   │   └── *.yml                             # Process version files
 │   ├── SNV/                                  # Single Nucleotide Variants
 │   │   ├── *.deepvariant.vcf.gz              # DeepVariant VCF output
 │   │   ├── *.deepvariant.vcf.gz.tbi          # VCF index files
 │   │   ├── *.deepvariant.gvcf.gz             # DeepVariant gVCF output
 │   │   ├── *.deepvariant.gvcf.gz.tbi         # gVCF index files
+│   │   └── *.yml                             # Process version files
+│   ├── SV/                                   # Structural Variants
+│   │   ├── *.candidate_small_indels.vcf.gz   # Manta small indel candidates
+│   │   ├── *.candidate_small_indels.vcf.gz.tbi
+│   │   ├── *.candidate_sv.vcf.gz             # Manta SV candidates
+│   │   ├── *.candidate_sv.vcf.gz.tbi
+│   │   ├── *.diploid_sv.vcf.gz               # Manta diploid SVs
+│   │   ├── *.diploid_sv.vcf.gz.tbi
+│   │   ├── *.pytor                           # CNVpytor data files
+│   │   ├── *1000.vcf                         # CNVpytor VCF output
+│   │   ├── *filtered.vcf                     # CNVpytor filtered VCF
+│   │   ├── *manhattan_plot.png               # CNVpytor Manhattan plot
+│   │   └── *.yml                             # Process version files
+│   ├── REPEATS/                              # Repeat Expansion Analysis
+│   │   ├── *.vcf.gz                          # ExpansionHunter VCF
+│   │   ├── *.json.gz                         # ExpansionHunter JSON
+│   │   ├── *_realigned.bam                   # ExpansionHunter realigned BAM
+│   │   ├── *.locus.tsv                       # ExpansionHunterDenovo locus data
+│   │   ├── *.motif.tsv                       # ExpansionHunterDenovo motif data
+│   │   ├── *.str_profile.json                # ExpansionHunterDenovo STR profile
 │   │   └── *.yml                             # Process version files
 │   └── ROH/                                  # Runs of Homozygosity
 │       ├── */*.HomRegions.tsv                # AutoMap homozygosity regions
@@ -200,6 +219,13 @@ results/
 ### Variant Analysis
 - **DEEPVARIANT_RUNDEEPVARIANT**: SNV/indel calling with DeepVariant
 - **AUTOMAP**: Variant annotation and runs of homozygosity detection
+- **MANTA_GERMLINE**: Structural variant detection
+- **CNVPYTOR**: Copy number variant analysis
+- **EXPANSIONHUNTER**: Repeat expansion detection
+- **EXPANSIONHUNTERDENOVO_PROFILE**: De novo repeat detection
+
+### Format Conversion
+- **SAMTOOLS_BAM2CRAM**: BAM to CRAM conversion
 
 ## Configuration
 
@@ -214,6 +240,10 @@ The pipeline uses the following Docker images from ECR registry (configure in `n
 - `multiqc_docker`: MultiQC report generation
 - `deepvariant_docker`: DeepVariant
 - `automap_docker`: AutoMap variant annotation
+- `manta_docker`: Manta structural variant detection
+- `cnvpytor_docker`: CNVpytor copy number analysis
+- `expansionhunter_docker`: ExpansionHunter repeat detection
+- `expansionhunterdenovo_docker`: ExpansionHunterDenovo de novo repeat detection
 
 ### Resource Requirements (HPC Optimized)
 
@@ -229,6 +259,11 @@ The pipeline uses the following Docker images from ECR registry (configure in `n
 | MULTIQC | 4 GB | 4 |
 | DEEPVARIANT_RUNDEEPVARIANT | 32 GB | 16 |
 | AUTOMAP | 16 GB | 8 |
+| MANTA_GERMLINE | 16 GB | 8 |
+| CNVPYTOR | 32 GB | 16 |
+| EXPANSIONHUNTER | 16 GB | 8 |
+| EXPANSIONHUNTERDENOVO_PROFILE | 16 GB | 8 |
+| SAMTOOLS_BAM2CRAM | 16 GB | 8 |
 
 ## Dependencies
 
