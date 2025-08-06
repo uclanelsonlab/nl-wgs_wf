@@ -3,6 +3,7 @@ process MULTIQC {
     label "multiqc"
         
     input:
+        path ref_qc
         path fastp_html 
         path fastp_json 
         tuple val(meta), path(metrics_files)
@@ -20,6 +21,8 @@ process MULTIQC {
         # Debug: List all files in current directory
         echo "Files in current directory:"
         ls -la
+        # Unzip the reference QC files
+        tar -xvzf ${ref_qc}
         
         echo "Input files:"
         echo "FASTP HTML: ${fastp_html}"

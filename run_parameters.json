@@ -23,5 +23,6 @@
     "variant_catalog": "s3://ucla-rare-diseases/aws-healthomics-pipelines/assets/expansionhunter/hg38/variant_catalog.json",
     "min_anchor_mapq": 50,
     "max_irr_mapq": 40,
-    "genome": "hg38"
+    "genome": "hg38",
+    "ref_qc": "s3://ucla-rare-diseases/aws-healthomics-pipelines/assets/references/NA12878_qc.tar.gz"
 }

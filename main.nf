@@ -108,6 +108,7 @@ workflow {
         SAMTOOLS_INDEX.out.bam
     )   
     MULTIQC(
+        params.ref_qc,
         FASTP.out.html,
         FASTP.out.json,
         PICARD_COLLECT_MULTIPLE_METRICS.out.metrics_files,

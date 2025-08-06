@@ -70,5 +70,8 @@
     },
     "genome": {
         "description": "Genome"
+    },
+    "ref_qc": {
+        "description": "NA12878 reference genome QC files"
     }
 }
