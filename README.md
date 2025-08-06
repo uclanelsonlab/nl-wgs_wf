@@ -166,12 +166,17 @@ results/
 │   ├── ALIGNMENT/                            # Alignment Files
 │   │   ├── *.sorted.bam                      # Sorted BAM files
 │   │   ├── *.MarkDuplicates.bam              # Duplicate-marked BAM files
+│   │   ├── *.bam.bai                         # BAM index files
 │   │   └── *.yml                             # Process version files
-│   └── SNV/                                  # Single Nucleotide Variants
-│       ├── *.deepvariant.vcf.gz              # DeepVariant VCF output
-│       ├── *.deepvariant.vcf.gz.tbi          # VCF index files
-│       ├── *.deepvariant.gvcf.gz             # DeepVariant gVCF output
-│       ├── *.deepvariant.gvcf.gz.tbi         # gVCF index files
+│   ├── SNV/                                  # Single Nucleotide Variants
+│   │   ├── *.deepvariant.vcf.gz              # DeepVariant VCF output
+│   │   ├── *.deepvariant.vcf.gz.tbi          # VCF index files
+│   │   ├── *.deepvariant.gvcf.gz             # DeepVariant gVCF output
+│   │   ├── *.deepvariant.gvcf.gz.tbi         # gVCF index files
+│   │   └── *.yml                             # Process version files
+│   └── ROH/                                  # Runs of Homozygosity
+│       ├── */*.HomRegions.tsv                # AutoMap homozygosity regions
+│       ├── */*.HomRegions.pdf                # AutoMap homozygosity plots
 │       └── *.yml                             # Process version files
 ```
 
