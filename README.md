@@ -62,10 +62,23 @@ graph TD
     H --> M[DEEPVARIANT]
     M --> N[AUTOMAP]
     
+    H --> O[MANTA_GERMLINE]
+    H --> P[CNVPYTOR]
+    H --> Q[EXPANSIONHUNTER]
+    H --> R[EXPANSIONHUNTERDENOVO]
+    H --> S[SAMTOOLS_BAM2CRAM]
+    
+    T[Variant Catalog] --> Q
+    U[Min Anchor MapQ] --> R
+    V[Max IRR MapQ] --> R
+    
     subgraph "Input Data"
         A
         D
         E
+        T
+        U
+        V
     end
     
     subgraph "Quality Control"
@@ -89,12 +102,24 @@ graph TD
     subgraph "Variant Analysis"
         M
         N
+        O
+        P
+        Q
+        R
+    end
+    
+    subgraph "Format Conversion"
+        S
     end
     
     style A fill:#e1f5fe
     style D fill:#e1f5fe
     style E fill:#e1f5fe
+    style T fill:#e1f5fe
+    style U fill:#e1f5fe
+    style V fill:#e1f5fe
     style L fill:#fff3e0
+    style S fill:#c8e6c9
 ```
 
 ## Quick Start
