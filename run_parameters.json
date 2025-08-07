@@ -10,6 +10,7 @@
     "qualimap_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/qualimap:2.3--hdfd78af_0",
     "fastp_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/fastp:1.0.1--heae3180_0",
     "automap_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/automap:v1.3",
+    "samtools_docker": "224597534425.dkr.ecr.us-west-2.amazonaws.com/samtools:1.19.2--h50ea8bc_1",
     "fasta": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.fa",
     "fai": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/hg38.fa.fai",
     "fasta_0123": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.fa.0123",
