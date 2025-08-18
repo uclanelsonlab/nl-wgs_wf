@@ -15,7 +15,7 @@ process AUTOMAP {
         def VERSION = "1.3"
         """
         zcat ${vcf} > ${prefix}.vcf
-        AutoMap_v1.3.sh --vcf ${prefix}.vcf --out . --genome ${genome} --id ${prefix}
+        AutoMap_v1.3.sh --genome ${genome} --out . --id ${prefix} --vcf ${prefix}.vcf
 
         cat <<-END_VERSIONS > automap_versions.yml
         "${task.process}":
