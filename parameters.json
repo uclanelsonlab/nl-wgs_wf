@@ -14,6 +14,9 @@
     "cnvpytor_docker": {
         "description": "Docker image for CNVpytor"
     },
+    "samtools_docker": {
+        "description": "Docker image for SAMtools"
+    },
     "expansionhunter_docker": {
         "description": "Docker image for ExpansionHunter"
     },
