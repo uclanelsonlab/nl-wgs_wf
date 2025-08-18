@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Release Process
-- Version 1.0.0 tagged and released on GitHub
-- Documentation updated with comprehensive README and CHANGELOG
+- Version 1.0.1 tagged and released on GitHub
+- Documentation updated to reflect output structure changes and resource updates
 - Pipeline tested and validated for production use
 
 ### Planned
@@ -17,6 +17,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Additional variant calling tools integration
 - Enhanced reporting and visualization features
 - Support for additional cloud platforms
+
+## [1.0.1] - 2025-01-27
+
+**Release Date**: January 27, 2025  
+**Commit**: 7280316  
+**Status**: Production Ready  
+**Breaking Changes**: Output directory structure simplified (removed genome subdirectories)
+
+### Added
+- `samtools_docker` parameter for dedicated SAMtools container support
+- Proper SAMtools container configuration for BAM to CRAM conversion
+
+### Changed
+- Increased Manta resources from 16GB/8CPUs to 32GB/16CPUs for better performance
+- Simplified output directory structure by removing `hg38/` subdirectories
+- Updated AutoMap parameter ordering for proper execution
+
+### Fixed
+- AutoMap parameter ordering issue that prevented proper execution
+- SAMtools container configuration (was incorrectly using BWA container)
+- Output directory structure consistency across all processes
+
+### Technical Details
+
+#### Process Updates
+- **MANTA_GERMLINE**: Increased memory allocation to 32GB and CPU allocation to 16
+- **SAMTOOLS_BAM2CRAM**: Now uses dedicated `samtools_docker` container instead of `bwa_docker`
+- **AUTOMAP**: Fixed parameter order in AutoMap_v1.3.sh call
+
+#### Configuration Changes
+- Added `samtools_docker` parameter to `nextflow.config`
+- Updated all `publishDir.path` configurations to remove genome-specific subdirectories
+- Enhanced resource management for improved pipeline stability
 
 ## [1.0.0] - 2025-01-27
 
