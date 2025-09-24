@@ -8,6 +8,7 @@ process FASTP {
     output:
         path "*.html", emit: html
         path "*.json", emit: json
+        tuple val(meta), path("*_1.fastq.gz"), path("*_2.fastq.gz"), emit: reads
         path "versions.yml", emit: versions
     
     when:
@@ -21,6 +22,8 @@ process FASTP {
         fastp \\
             -i ${fastq_r1} \\
             -I ${fastq_r2} \\
+            -o ${prefix}_1.fastq.gz \\
+            -O ${prefix}_2.fastq.gz \\
             --thread ${task.cpus} \\
             -h ${prefix}_fastp.html \\
             -j ${prefix}_fastp.json \\
@@ -38,6 +41,8 @@ process FASTP {
         """
         touch ${prefix}_fastp.html
         touch ${prefix}_fastp.json
+        touch ${prefix}_1.fastq.gz
+        touch ${prefix}_2.fastq.gz
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
             fastp: \$(fastp --version 2>&1 | sed 's/^fastp //')

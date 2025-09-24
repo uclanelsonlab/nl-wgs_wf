@@ -78,7 +78,7 @@ workflow {
     
     // Run BWA-MEM2 alignment using cleaned reads from FASTP
     BWAMEM2_MEM(
-        ch_reads,
+        FASTP.out.reads,
         ch_index,
         ch_fasta
     )
