@@ -3,7 +3,7 @@ process BWAMEM2_MEM {
     label 'bwamem2_mem'
 
     input:
-        tuple val(meta), path(reads)
+        tuple val(meta), path(reads_1), path(reads_2)
         tuple val(meta2), path(index)
         tuple val(meta3), path(fasta_files)
         
@@ -26,7 +26,7 @@ process BWAMEM2_MEM {
             -M \\
             -R "@RG\\tID:${prefix}\\tCN:CN\\tLB:${prefix}\\tPL:ILLUMINA\\tPU:${prefix}\\tSM:${prefix}" \\
             \$INDEX \\
-            ${reads[0]} ${reads[1]} | \\
+            ${reads_1} ${reads_2} | \\
         samtools view \\
             -@ ${task.cpus} \\
             -S -b > ${prefix}.bam
