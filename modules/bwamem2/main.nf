@@ -26,7 +26,7 @@ process BWAMEM2_MEM {
             -M \\
             -R "@RG\\tID:${prefix}\\tCN:CN\\tLB:${prefix}\\tPL:ILLUMINA\\tPU:${prefix}\\tSM:${prefix}" \\
             \$INDEX \\
-            ${reads} | \\
+            ${reads[0]} ${reads[1]} | \\
         samtools view \\
             -@ ${task.cpus} \\
             -S -b > ${prefix}.bam
