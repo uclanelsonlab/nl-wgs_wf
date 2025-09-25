@@ -76,9 +76,18 @@ workflow {
     // Run Fastp for quality control and adapter trimming
     FASTP(ch_reads)
     
+    // Transform FASTP output to match BWA-MEM2 input format
+    FASTP.out.reads
+        .map { meta, reads ->
+            // Sort reads to ensure R1 comes before R2
+            def sorted_reads = reads.sort()
+            [ meta, sorted_reads[0], sorted_reads[1] ]
+        }
+        .set { ch_processed_reads }
+    
     // Run BWA-MEM2 alignment using cleaned reads from FASTP
     BWAMEM2_MEM(
-        FASTP.out.reads,
+        ch_processed_reads,
         ch_index,
         ch_fasta
     )
