@@ -3,7 +3,7 @@ process BWAMEM2_MEM {
     label 'bwamem2_mem'
 
     input:
-        tuple val(meta), path(reads_1), path(reads_2)
+        tuple val(meta), path(reads)
         tuple val(meta2), path(index)
         tuple val(meta3), path(fasta_files)
         
@@ -16,8 +16,6 @@ process BWAMEM2_MEM {
 
     script:
         def prefix = task.ext.prefix ?: "${meta.id}"
-        def total_mem = task.memory.toGiga() as Double
-        def mem_per_thread = Math.max(1.0, (total_mem * 0.6) / (task.cpus as Double)) as Integer
         def fasta = fasta_files[0]  // First file is the FASTA
 
         """
