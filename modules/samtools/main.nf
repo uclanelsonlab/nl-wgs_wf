@@ -75,6 +75,45 @@ process SAMTOOLS_BAM2CRAM {
         """
 }
 
+process SAMTOOLS_CRAM2BAM {
+    tag "$meta.id"
+    label 'samtools_sort'
+
+    input:
+        tuple val(meta), path(cram)
+        tuple val(meta2), path(fasta_files)
+
+    output:
+        tuple val(meta), path("*.bam"), emit: bam
+        path "samtools_versions.yml", emit: versions
+
+    when:
+        task.ext.when == null || task.ext.when
+
+    script:
+        def prefix = task.ext.prefix ?: "${meta.id}"
+        def fasta = fasta_files[0]  // First file is the FASTA
+        """
+        samtools view -@ ${task.cpus} -T ${fasta} -b -o ${prefix}.bam ${cram}
+
+        cat <<-END_VERSIONS > samtools_versions.yml
+        "${task.process}":
+            samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
+        END_VERSIONS
+        """
+
+    stub:
+        def prefix = task.ext.prefix ?: "${meta.id}"
+        """
+        touch ${prefix}.bam
+
+        cat <<-END_VERSIONS > samtools_versions.yml
+        "${task.process}":
+            samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
+        END_VERSIONS
+        """
+}
+
 process SAMTOOLS_INDEX {
     tag "$meta.id"
     label 'samtools_index'

@@ -48,10 +48,25 @@
         "description": "Reference genome bwt file"
     },
     "fastq_r1": {
-        "description": "Fastq file for read 1"
+        "description": "Fastq file for read 1 (required when input_type=fastq)"
     },
     "fastq_r2": {
-        "description": "Fastq file for read 2"
+        "description": "Fastq file for read 2 (required when input_type=fastq)"
+    },
+    "bam_input": {
+        "description": "BAM input file (required when input_type=bam)"
+    },
+    "bam_index": {
+        "description": "BAM index file (.bai) - optional, will be created if not provided"
+    },
+    "cram_input": {
+        "description": "CRAM input file (required when input_type=cram)"
+    },
+    "cram_index": {
+        "description": "CRAM index file (.crai) - optional, will be created if not provided"
+    },
+    "input_type": {
+        "description": "Type of input data: fastq, bam, or cram"
     },
     "sample_name": {
         "description": "Sample name"
