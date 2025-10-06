@@ -9,6 +9,7 @@ process DEEPVARIANT_RUNDEEPVARIANT {
     output:
         tuple val(meta), path("*.deepvariant.vcf.gz"), path("*.deepvariant.vcf.gz.tbi"), emit: vcf
         tuple val(meta), path("*.deepvariant.gvcf.gz"), path("*.deepvariant.gvcf.gz.tbi"), emit: gvcf
+        tuple val(meta), path("*.visual_report.html"), emit: report
         path "deepvariant_versions.yml", emit: versions
 
     when:
@@ -25,6 +26,7 @@ process DEEPVARIANT_RUNDEEPVARIANT {
             --reads ${bam} \\
             --output_vcf ${prefix}.deepvariant.vcf.gz \\
             --output_gvcf ${prefix}.deepvariant.gvcf.gz \\
+            --vcf_stats_report=true \\
             --num_shards ${task.cpus} --logging_dir ./logs
 
         cat <<-END_VERSIONS > deepvariant_versions.yml
@@ -38,6 +40,7 @@ process DEEPVARIANT_RUNDEEPVARIANT {
         """
         echo "" | gzip > ${prefix}.deepvariant.vcf.gz
         echo "" | gzip > ${prefix}.deepvariant.gvcf.gz
+        touch ${prefix}.visual_report.html
 
         cat <<-END_VERSIONS > deepvariant_versions.yml
         "${task.process}":

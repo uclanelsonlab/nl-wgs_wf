@@ -107,20 +107,25 @@ workflow {
     QUALIMAP_BAMQC(
         SAMTOOLS_INDEX.out.bam
     )   
+    
+    // Run variant calling (moved before MultiQC)
+    DEEPVARIANT_RUNDEEPVARIANT(
+        SAMTOOLS_INDEX.out.bam,
+        ch_fasta
+    )
+    
+    // Run MultiQC with DeepVariant report
     MULTIQC(
         params.ref_qc,
         FASTP.out.html,
         FASTP.out.json,
         PICARD_COLLECT_MULTIPLE_METRICS.out.metrics_files,
         PICARD_COLLECT_WGS_METRICS.out.wgs_metrics,
-        QUALIMAP_BAMQC.out.results
+        QUALIMAP_BAMQC.out.results,
+        DEEPVARIANT_RUNDEEPVARIANT.out.report
     )
     
-    // Run variant calling
-    DEEPVARIANT_RUNDEEPVARIANT(
-        SAMTOOLS_INDEX.out.bam,
-        ch_fasta
-    )
+    // Continue with other analyses
     AUTOMAP(
         DEEPVARIANT_RUNDEEPVARIANT.out.vcf,
         params.genome
