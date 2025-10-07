@@ -10,6 +10,7 @@ process MULTIQC {
         tuple val(meta2), path(wgs_metrics)
         tuple val(meta3), path(qualimap_results)
         tuple val(meta4), path(deepvariant_report)
+        tuple val(meta5), path(mosdepth_summary)
     
     output:
         tuple val(meta), path("*multiqc_report.html"), emit: report
@@ -32,6 +33,7 @@ process MULTIQC {
         echo "WGS metrics: ${wgs_metrics}"
         echo "Qualimap results: ${qualimap_results}"
         echo "DeepVariant report: ${deepvariant_report}"
+        echo "Mosdepth summary: ${mosdepth_summary}"
         
         multiqc . \\
             --filename ${prefix}_multiqc_report.html \\

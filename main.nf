@@ -7,6 +7,7 @@ include { CNVPYTOR } from './modules/cnvpytor/main'
 include { BWAMEM2_MEM } from './modules/bwamem2/main'
 include { MANTA_GERMLINE } from './modules/manta/main'
 include { QUALIMAP_BAMQC } from './modules/qualimap/main'
+include { MOSDEPTH_BED } from './modules/mosdepth/main'
 include { DEEPVARIANT_RUNDEEPVARIANT } from './modules/deepvariant/main'
 include { SAMTOOLS_SORT; SAMTOOLS_BAM2CRAM; SAMTOOLS_INDEX; SAMTOOLS_CRAM2BAM } from './modules/samtools/main'
 include { EXPANSIONHUNTER; EXPANSIONHUNTERDENOVO_PROFILE } from './modules/expansionhunter/main'
@@ -25,6 +26,7 @@ log.info """\
     cram_index   : ${params.cram_index}
     fasta        : ${params.fasta}
     fai          : ${params.fai}
+    mt_bed       : ${params.mt_bed}
     """
     .stripIndent(true)
 
@@ -117,6 +119,17 @@ Channel
         [ meta, files ]
     }
     .set { ch_fasta }
+
+// Reference genome channel with dict for mosdepth
+Channel
+    .fromPath([params.fasta, params.fai, params.dict])
+    .collect()
+    .map { files ->
+        def meta = [:]
+        meta.id = files[0].baseName
+        [ meta, files[0], files[1], files[2] ]  // [meta, fasta, fai, dict]
+    }
+    .set { ch_fasta_dict }
 
 // BWA index channel - collect all index files together
 Channel
@@ -229,6 +242,19 @@ workflow {
         SAMTOOLS_INDEX.out.bam
     )   
     
+    // Convert BAM to CRAM for mosdepth (mosdepth works better with CRAM)
+    SAMTOOLS_BAM2CRAM(
+        SAMTOOLS_INDEX.out.bam,
+        ch_fasta
+    )
+    
+    // Run mosdepth for coverage analysis
+    MOSDEPTH_BED(
+        ch_fasta_dict,
+        SAMTOOLS_BAM2CRAM.out.cram,
+        params.mt_bed
+    )
+    
     // Run variant calling first (needed for MultiQC)
     DEEPVARIANT_RUNDEEPVARIANT(
         SAMTOOLS_INDEX.out.bam,
@@ -244,7 +270,8 @@ workflow {
             PICARD_COLLECT_MULTIPLE_METRICS.out.metrics_files,
             PICARD_COLLECT_WGS_METRICS.out.wgs_metrics,
             QUALIMAP_BAMQC.out.results,
-            DEEPVARIANT_RUNDEEPVARIANT.out.report
+            DEEPVARIANT_RUNDEEPVARIANT.out.report,
+            MOSDEPTH_BED.out.summary
         )
     } else {
         // For BAM/CRAM input, create empty channels for FASTP outputs
@@ -255,7 +282,8 @@ workflow {
             PICARD_COLLECT_MULTIPLE_METRICS.out.metrics_files,
             PICARD_COLLECT_WGS_METRICS.out.wgs_metrics,
             QUALIMAP_BAMQC.out.results,
-            DEEPVARIANT_RUNDEEPVARIANT.out.report
+            DEEPVARIANT_RUNDEEPVARIANT.out.report,
+            MOSDEPTH_BED.out.summary
         )
     }
     
@@ -287,12 +315,4 @@ workflow {
         SAMTOOLS_INDEX.out.bam,
         ch_fasta
     )  
-    
-    // Convert BAM to CRAM (only if input wasn't already CRAM)
-    if (params.input_type != "cram") {
-        SAMTOOLS_BAM2CRAM(
-            SAMTOOLS_INDEX.out.bam,
-            ch_fasta
-        )
-    }
 }
