@@ -40,6 +40,7 @@ process DEEPVARIANT_RUNDEEPVARIANT {
         """
         echo "" | gzip > ${prefix}.deepvariant.vcf.gz
         echo "" | gzip > ${prefix}.deepvariant.gvcf.gz
+        touch ${prefix}.visual_report.html
 
         cat <<-END_VERSIONS > deepvariant_versions.yml
         "${task.process}":
