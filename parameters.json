@@ -29,11 +29,23 @@
     "automap_docker": {
         "description": "Docker image for Automap"
     },
+    "mosdepth_docker": {
+        "description": "Docker image for Mosdepth"
+    },
+    "input_type": {
+        "description": "Type of input data: fastq, bam, or cram"
+    },
+    "sample_name": {
+        "description": "Sample name"
+    },
     "fasta": {
         "description": "Reference genome fasta file"
     },
     "fai": {
         "description": "Reference genome fai file"
+    },
+    "dict": {
+        "description": "Reference genome dictionary file (.dict)"
     },
     "fasta_0123": {
         "description": "Reference genome 0123 file"
@@ -48,13 +60,28 @@
         "description": "Reference genome bwt file"
     },
     "fastq_r1": {
-        "description": "Fastq file for read 1"
+        "description": "Fastq file for read 1 (required when input_type=fastq)",
+        "optional": true
     },
     "fastq_r2": {
-        "description": "Fastq file for read 2"
+        "description": "Fastq file for read 2 (required when input_type=fastq)",
+        "optional": true
     },
-    "sample_name": {
-        "description": "Sample name"
+    "bam_input": {
+        "description": "BAM input file (required when input_type=bam)",
+        "optional": true
+    },
+    "bam_index": {
+        "description": "BAM index file (.bai) - optional, will be created if not provided", 
+        "optional": true
+    },
+    "cram_input": {
+        "description": "CRAM input file (required when input_type=cram)",
+        "optional": true
+    },
+    "cram_index": {
+        "description": "CRAM index file (.crai) - optional, will be created if not provided",
+        "optional": true
     },
     "variant_catalog": {
         "description": "Variant catalog file"
@@ -76,5 +103,8 @@
     },
     "ref_qc": {
         "description": "NA12878 reference genome QC files"
+    },
+    "mt_bed": {
+        "description": "Mitochondrial genes BED file for mosdepth coverage analysis"
     }
 }
