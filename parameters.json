@@ -35,6 +35,14 @@
     "input_type": {
         "description": "Type of input data: fastq, bam, or cram"
     },
+    "input_1": {
+        "description": "Primary input file: FASTQ R1 (fastq), BAM file (bam), or CRAM file (cram)",
+        "optional": false
+    },
+    "input_2": {
+        "description": "Secondary input file: FASTQ R2 (fastq), BAM index .bai (bam), or CRAM index .crai (cram) - optional for bam/cram",
+        "optional": false
+    },
     "sample_name": {
         "description": "Sample name"
     },
@@ -58,30 +66,6 @@
     },
     "fasta_bwt": {
         "description": "Reference genome bwt file"
-    },
-    "fastq_r1": {
-        "description": "Fastq file for read 1 (required when input_type=fastq)",
-        "optional": true
-    },
-    "fastq_r2": {
-        "description": "Fastq file for read 2 (required when input_type=fastq)",
-        "optional": true
-    },
-    "bam_input": {
-        "description": "BAM input file (required when input_type=bam)",
-        "optional": true
-    },
-    "bam_index": {
-        "description": "BAM index file (.bai) - optional, will be created if not provided", 
-        "optional": true
-    },
-    "cram_input": {
-        "description": "CRAM input file (required when input_type=cram)",
-        "optional": true
-    },
-    "cram_index": {
-        "description": "CRAM index file (.crai) - optional, will be created if not provided",
-        "optional": true
     },
     "variant_catalog": {
         "description": "Variant catalog file"
