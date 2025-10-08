@@ -18,12 +18,8 @@ log.info """\
     ===================================
     sample_name  : ${params.sample_name}
     input_type   : ${params.input_type}
-    fastq_r1     : ${params.fastq_r1}
-    fastq_r2     : ${params.fastq_r2}
-    bam_input    : ${params.bam_input}
-    bam_index    : ${params.bam_index}
-    cram_input   : ${params.cram_input}
-    cram_index   : ${params.cram_index}
+    input_1      : ${params.input_1}
+    input_2      : ${params.input_2}
     fasta        : ${params.fasta}
     fai          : ${params.fai}
     mt_bed       : ${params.mt_bed}
@@ -34,13 +30,13 @@ log.info """\
 if (params.input_type == "fastq") {
     // Single channel for paired-end reads
     Channel
-        .fromPath(params.fastq_r1)
+        .fromPath(params.input_1)  // fastq_r1
         .map { r1_file ->
             def meta = [:]
             meta.id = params.sample_name ?: r1_file.baseName
             
-            // Use the R2 parameter directly
-            def r2_file = file(params.fastq_r2)
+            // Use input_2 as fastq_r2
+            def r2_file = file(params.input_2)
             
             [ meta, [r1_file, r2_file] ]
         }
@@ -51,10 +47,10 @@ if (params.input_type == "fastq") {
     ch_input_cram = Channel.empty()
 } else if (params.input_type == "bam") {
     // BAM input channel with optional index
-    if (params.bam_index) {
-        // If index is provided, use it
+    if (params.input_2) {
+        // If index is provided (input_2 = bam_index), use it
         Channel
-            .fromPath([params.bam_input, params.bam_index])
+            .fromPath([params.input_1, params.input_2])  // [bam_input, bam_index]
             .collect()
             .map { files ->
                 def meta = [:]
@@ -65,7 +61,7 @@ if (params.input_type == "fastq") {
     } else {
         // If no index provided, just the BAM file (index will be created later)
         Channel
-            .fromPath(params.bam_input)
+            .fromPath(params.input_1)  // bam_input
             .map { bam_file ->
                 def meta = [:]
                 meta.id = params.sample_name ?: bam_file.baseName
@@ -79,10 +75,10 @@ if (params.input_type == "fastq") {
     ch_input_cram = Channel.empty()
 } else if (params.input_type == "cram") {
     // CRAM input channel with optional index
-    if (params.cram_index) {
-        // If index is provided, use it
+    if (params.input_2) {
+        // If index is provided (input_2 = cram_index), use it
         Channel
-            .fromPath([params.cram_input, params.cram_index])
+            .fromPath([params.input_1, params.input_2])  // [cram_input, cram_index]
             .collect()
             .map { files ->
                 def meta = [:]
@@ -93,7 +89,7 @@ if (params.input_type == "fastq") {
     } else {
         // If no index provided, just the CRAM file
         Channel
-            .fromPath(params.cram_input)
+            .fromPath(params.input_1)  // cram_input
             .map { cram_file ->
                 def meta = [:]
                 meta.id = params.sample_name ?: cram_file.baseName
@@ -182,7 +178,7 @@ workflow {
         
     } else if (params.input_type == "cram") {
         // Convert CRAM to BAM first
-        if (params.cram_index) {
+        if (params.input_2) {
             // If CRAM has index, we can use it directly for conversion
             SAMTOOLS_CRAM2BAM(
                 ch_input_cram.map { meta, cram, crai -> [meta, cram] },
@@ -202,7 +198,7 @@ workflow {
         }
         
     } else if (params.input_type == "bam") {
-        if (params.bam_index) {
+        if (params.input_2) {
             // If BAM has index, check if it needs sorting or can go directly to mark duplicates
             // For now, we'll still sort to ensure proper coordinate order
             SAMTOOLS_SORT(
