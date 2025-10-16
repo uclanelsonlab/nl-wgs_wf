@@ -11,8 +11,6 @@ process MOSDEPTH_BED {
         tuple val(meta), path("*.mosdepth.global.dist.txt"), emit: global_dist
         tuple val(meta), path("*.mosdepth.region.dist.txt"), emit: region_dist
         tuple val(meta), path("*.mosdepth.summary.txt"),     emit: summary
-        tuple val(meta), path("*.per-base.bed.gz"),          emit: perbase
-        tuple val(meta), path("*.per-base.bed.gz.csi"),      emit: perbase_index
         tuple val(meta), path("*.regions.bed.gz"),           emit: regions_bed
         tuple val(meta), path("*.regions.bed.gz.csi"),       emit: regions_bed_index
         path "mosdepth_versions.yml",      emit: versions
