@@ -77,37 +77,44 @@ process SAMTOOLS_BAM2CRAM {
 
 process SAMTOOLS_CRAM2BAM {
     tag "$meta.id"
-    label 'samtools_sort'
+    label 'samtools_cram2bam'
 
     input:
         tuple val(meta), path(cram)
-        tuple val(meta2), path(fasta_files)
-
+        tuple val(meta2), path(fasta), path(fai)
+    
     output:
-        tuple val(meta), path("*.bam"), emit: bam
-        path "samtools_versions.yml", emit: versions
-
+        tuple val(meta), path("${prefix}.bam"), emit: bam
+        path "versions.yml", emit: versions
+    
     when:
         task.ext.when == null || task.ext.when
-
+    
     script:
-        def prefix = task.ext.prefix ?: "${meta.id}"
-        def fasta = fasta_files[0]  // First file is the FASTA
+        def args = task.ext.args ?: ''
+        prefix = task.ext.prefix ?: "${meta.id}"
+        
         """
-        samtools view -@ ${task.cpus} -T ${fasta} -b -o ${prefix}.bam ${cram}
-
-        cat <<-END_VERSIONS > samtools_versions.yml
+        samtools view \\
+            --threads ${task.cpus} \\
+            --reference ${fasta} \\
+            --output ${prefix}.bam \\
+            --output-fmt BAM \\
+            $args \\
+            $cram
+        
+        cat <<-END_VERSIONS > versions.yml
         "${task.process}":
             samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
         END_VERSIONS
         """
-
+    
     stub:
-        def prefix = task.ext.prefix ?: "${meta.id}"
+        prefix = task.ext.prefix ?: "${meta.id}"
         """
         touch ${prefix}.bam
-
-        cat <<-END_VERSIONS > samtools_versions.yml
+        
+        cat <<-END_VERSIONS > versions.yml
         "${task.process}":
             samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
         END_VERSIONS

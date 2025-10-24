@@ -53,84 +53,151 @@ This pipeline performs end-to-end analysis of whole genome sequencing data, incl
 
 ```mermaid
 graph TD
-    A[FASTQ R1/R2] --> B[FASTP]
-    B --> C[BWAMEM2_MEM]
-    D[Reference FASTA] --> C
-    E[BWA Index Files] --> C
+    %% Input types
+    A[FASTQ R1/R2] --> FASTQ_SW[FASTQ_PROCESSING Subworkflow]
+    B[BAM File] --> BAM_SW[BAM_PROCESSING Subworkflow]
+    C[CRAM File] --> CRAM_SW[CRAM_PROCESSING Subworkflow]
     
-    C --> F[SAMTOOLS_SORT]
-    F --> G[PICARD_MARKDUPLICATES]
-    G --> H[SAMTOOLS_INDEX]
+    %% FASTQ Processing Subworkflow
+    FASTQ_SW --> D[FASTP]
+    D --> E[BWAMEM2_MEM]
+    F[BWA Index] --> E
+    G[Reference FASTA] --> E
+    E --> H[SAMTOOLS_SORT]
     
-    H --> I[PICARD_COLLECT_MULTIPLE_METRICS]
-    H --> J[PICARD_COLLECT_WGS_METRICS]
-    H --> K[QUALIMAP_BAMQC]
+    %% BAM Processing Subworkflow
+    BAM_SW --> I[SAMTOOLS_SORT]
     
-    B --> L[MULTIQC]
-    I --> L
-    J --> L
-    K --> L
+    %% CRAM Processing Subworkflow
+    CRAM_SW --> J[SAMTOOLS_CRAM2BAM]
+    G --> J
     
-    H --> M[EXPANSIONHUNTER]
-    H --> N[MANTA_GERMLINE]
-    H --> O[CNVPYTOR]
-    H --> P[EXPANSIONHUNTERDENOVO_PROFILE]
-    H --> Q[SAMTOOLS_BAM2CRAM]
-    H --> R[DEEPVARIANT]
-    R --> S[AUTOMAP]
+    %% Converge to sorted BAM
+    H --> COMMON_SW[COMMON_ANALYSIS Subworkflow]
+    I --> COMMON_SW
+    J --> COMMON_SW
     
-    T[Variant Catalog] --> M
-    U[Min Anchor MapQ] --> P
-    V[Max IRR MapQ] --> P
+    %% Common Analysis - BAM Processing
+    COMMON_SW --> K[PICARD_MARKDUPLICATES]
+    G --> K
+    K --> L[SAMTOOLS_INDEX]
     
-    subgraph "Input Data"
+    %% Common Analysis - QC Metrics
+    L --> M[PICARD_COLLECT_MULTIPLE_METRICS]
+    L --> N[PICARD_COLLECT_WGS_METRICS]
+    L --> O[QUALIMAP_BAMQC]
+    L --> P[SAMTOOLS_BAM2CRAM]
+    G --> M
+    G --> N
+    G --> P
+    
+    %% Common Analysis - Coverage
+    P --> Q[MOSDEPTH_BED]
+    R[Reference DICT] --> Q
+    S[MT BED] --> Q
+    
+    %% Common Analysis - Variant Calling
+    L --> T[DEEPVARIANT]
+    G --> T
+    T --> U[AUTOMAP]
+    V[Genome Version] --> U
+    
+    %% Common Analysis - Repeat & SV Analysis
+    L --> W[EXPANSIONHUNTER]
+    G --> W
+    X[Variant Catalog] --> W
+    
+    L --> Y[EXPANSIONHUNTERDENOVO_PROFILE]
+    G --> Y
+    Z[Min Anchor MapQ] --> Y
+    AA[Max IRR MapQ] --> Y
+    
+    L --> AB[MANTA_GERMLINE]
+    G --> AB
+    
+    L --> AC[CNVPYTOR]
+    G --> AC
+    
+    %% MultiQC
+    D --> AD[MULTIQC]
+    M --> AD
+    N --> AD
+    O --> AD
+    T --> AD
+    Q --> AD
+    
+    %% Subgraph styling
+    subgraph "Input Types"
         A
+        B
+        C
+    end
+    
+    subgraph "FASTQ Processing"
+        FASTQ_SW
         D
         E
-        T
-        U
-        V
-    end
-    
-    subgraph "Quality Control"
-        B
-    end
-    
-    subgraph "Alignment & Processing"
-        C
-        F
-        G
         H
     end
     
-    subgraph "Quality Assessment"
+    subgraph "BAM Processing"
+        BAM_SW
         I
+    end
+    
+    subgraph "CRAM Processing"
+        CRAM_SW
         J
+    end
+    
+    subgraph "Common Analysis - BAM Preparation"
+        COMMON_SW
         K
         L
     end
     
-    subgraph "Variant Analysis"
+    subgraph "Common Analysis - QC & Metrics"
         M
         N
         O
         P
+        Q
+        AD
+    end
+    
+    subgraph "Common Analysis - Variant Calling"
+        T
+        U
+    end
+    
+    subgraph "Common Analysis - SV & Repeat Analysis"
+        W
+        Y
+        AB
+        AC
+    end
+    
+    subgraph "Reference Files"
+        F
+        G
         R
         S
+        V
+        X
+        Z
+        AA
     end
     
-    subgraph "Output Formats"
-        Q
-    end
-    
+    %% Styling
     style A fill:#e1f5fe
-    style D fill:#e1f5fe
-    style E fill:#e1f5fe
-    style T fill:#e1f5fe
-    style U fill:#e1f5fe
-    style V fill:#e1f5fe
-    style L fill:#fff3e0
-    style Q fill:#c8e6c9
+    style B fill:#e1f5fe
+    style C fill:#e1f5fe
+    style FASTQ_SW fill:#ffecb3
+    style BAM_SW fill:#ffecb3
+    style CRAM_SW fill:#ffecb3
+    style COMMON_SW fill:#ffecb3
+    style AD fill:#fff3e0
+    style P fill:#c8e6c9
 ```
 
 ## Installation
