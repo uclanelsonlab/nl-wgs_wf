@@ -28,8 +28,6 @@ workflow {
             meta.id = files[0].baseName
             [ meta, files ]
         }
-    // Debug the fasta channel structure
-    ch_fasta.view { "ch_fasta structure: $it" }
 
     ch_fasta_dict = Channel
         .fromPath([params.fasta, params.fai, params.dict])
@@ -67,11 +65,21 @@ workflow {
                 [ meta, [r1_file, r2_file] ]
             }
 
+        // Debug input channels
+        ch_reads.view { "DEBUG: ch_reads = $it" }
+        ch_index.view { "DEBUG: ch_index = $it" }
+        ch_fasta.view { "DEBUG: ch_fasta = $it" }
+
         FASTQ_PROCESSING(
             ch_reads,
             ch_index,
             ch_fasta
         )
+        
+        // Debug outputs from FASTQ_PROCESSING
+        FASTQ_PROCESSING.out.sorted_bam.view { "DEBUG: FASTQ_PROCESSING.out.sorted_bam = $it" }
+        FASTQ_PROCESSING.out.fastp_html.view { "DEBUG: FASTQ_PROCESSING.out.fastp_html = $it" }
+        FASTQ_PROCESSING.out.fastp_json.view { "DEBUG: FASTQ_PROCESSING.out.fastp_json = $it" }
         
         ch_sorted_bam = FASTQ_PROCESSING.out.sorted_bam
         ch_fastp_html = FASTQ_PROCESSING.out.fastp_html
@@ -125,21 +133,26 @@ workflow {
                     [ meta, cram_file ]
                 }
         }
-        // Debug the input channels
-        ch_input_cram.view { "ch_input_cram structure: $it" }
 
         CRAM_PROCESSING(
             ch_input_cram,
             ch_fasta
         )
-        // Debug the channel structure
-        CRAM_PROCESSING.out.sorted_bam.view { "CRAM_PROCESSING output: $it" }
         
         ch_sorted_bam = CRAM_PROCESSING.out.sorted_bam
 
     } else {
         error "Invalid input_type: ${params.input_type}. Must be 'fastq', 'bam', or 'cram'"
     }
+
+    // Debug final channels before COMMON_ANALYSIS
+    ch_sorted_bam.view { "DEBUG: Final ch_sorted_bam = $it" }
+    ch_fasta.view { "DEBUG: Final ch_fasta = $it" }
+    ch_fasta_dict.view { "DEBUG: Final ch_fasta_dict = $it" }
+
+    // Count items in channels
+    ch_sorted_bam.count().view { "DEBUG: ch_sorted_bam count = $it" }
+    ch_fasta.count().view { "DEBUG: ch_fasta count = $it" }
 
     // Run common analysis steps
     COMMON_ANALYSIS(

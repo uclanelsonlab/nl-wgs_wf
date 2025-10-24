@@ -4,7 +4,7 @@ process PICARD_MARKDUPLICATES {
 
     input:
         tuple val(meta), path(bam), path(bam_index)
-        tuple val(meta2), path(fasta), path(fai)
+        tuple val(meta2), path(fasta_files)
     
     output:
         tuple val(meta), path("${prefix}.marked.bam"), emit: bam
@@ -18,6 +18,7 @@ process PICARD_MARKDUPLICATES {
         def args = task.ext.args ?: ''
         prefix = task.ext.prefix ?: "${meta.id}"
         def avail_mem = 3072
+        def fasta = fasta_files[0]  // First file is the FASTA
         if (!task.memory) {
             log.info '[Picard MarkDuplicates] Available memory not known - defaulting to 3GB. Specify process memory requirements to change this default.'
         } else {
@@ -25,9 +26,7 @@ process PICARD_MARKDUPLICATES {
         }
         
         """
-        picard \\
-            -Xmx${avail_mem}M \\
-            MarkDuplicates \\
+        java -Xmx${avail_mem}M -jar /usr/picard/picard.jar MarkDuplicates \\
             --INPUT ${bam} \\
             --OUTPUT ${prefix}.marked.bam \\
             --METRICS_FILE ${prefix}.marked.bam.metrics \\
