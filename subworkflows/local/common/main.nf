@@ -8,6 +8,7 @@ include { AUTOMAP } from '../../../modules/automap/main'
 include { EXPANSIONHUNTER; EXPANSIONHUNTERDENOVO_PROFILE } from '../../../modules/expansionhunter/main'
 include { MANTA_GERMLINE } from '../../../modules/manta/main'
 include { CNVPYTOR } from '../../../modules/cnvpytor/main'
+include { HAPCUT2_PHASING } from '../hapcut2/main'
 
 workflow COMMON_ANALYSIS {
     take:
@@ -69,6 +70,14 @@ workflow COMMON_ANALYSIS {
         ch_fasta
     )
     ch_versions = ch_versions.mix(DEEPVARIANT_RUNDEEPVARIANT.out.versions)
+
+    // Haplotype phasing
+    HAPCUT2_PHASING(
+        SAMTOOLS_INDEX.out.bam,
+        DEEPVARIANT_RUNDEEPVARIANT.out.vcf,
+        ch_fasta
+    )
+    ch_versions = ch_versions.mix(HAPCUT2_PHASING.out.versions)
 
     // MultiQC - conditional on input type
     if (input_type == "fastq") {
