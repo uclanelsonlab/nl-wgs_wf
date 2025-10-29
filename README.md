@@ -42,6 +42,7 @@ This pipeline performs end-to-end analysis of whole genome sequencing data, incl
 - **BAM Processing**: Sorting, indexing, duplicate marking, and format conversion
 - **Quality Assessment**: MultiQC report aggregation, Qualimap BAM QC, Picard metrics
 - **Variant Calling**: SNV/indel detection with DeepVariant
+- **Haplotype Phasing**: HapCUT2 for phasing heterozygous variants and determining phase blocks
 - **Structural Variants**: Detection with Manta
 - **Copy Number Variants**: Analysis with CNVpytor
 - **Repeat Expansions**: Detection with ExpansionHunter and ExpansionHunterDenovo
@@ -101,6 +102,14 @@ graph TD
     G --> T
     T --> U[AUTOMAP]
     V[Genome Version] --> U
+    
+    %% Common Analysis - Haplotype Phasing
+    T --> HAPCUT2_SW[HAPCUT2_PHASING Subworkflow]
+    L --> HAPCUT2_SW
+    HAPCUT2_SW --> AE[BCFTOOLS_VIEW_DIPLOID]
+    AE --> AF[HAPCUT2_EXTRACTHAIRS]
+    G --> AF
+    AF --> AG[HAPCUT2_HAPCUT2]
     
     %% Common Analysis - Repeat & SV Analysis
     L --> W[EXPANSIONHUNTER]
@@ -170,6 +179,13 @@ graph TD
         U
     end
     
+    subgraph "Common Analysis - Haplotype Phasing"
+        HAPCUT2_SW
+        AE
+        AF
+        AG
+    end
+    
     subgraph "Common Analysis - SV & Repeat Analysis"
         W
         Y
@@ -196,6 +212,7 @@ graph TD
     style BAM_SW fill:#ffecb3
     style CRAM_SW fill:#ffecb3
     style COMMON_SW fill:#ffecb3
+    style HAPCUT2_SW fill:#ffecb3
     style AD fill:#fff3e0
     style P fill:#c8e6c9
 ```
@@ -244,6 +261,9 @@ outdir/
 │   ├── *.deepvariant.vcf.gz.tbi          # VCF index files
 │   ├── *.deepvariant.gvcf.gz             # DeepVariant gVCF output
 │   ├── *.deepvariant.gvcf.gz.tbi         # gVCF index files
+│   ├── *.diploid.vcf                     # BCFtools filtered diploid VCF
+│   ├── *.fragment_file                   # HapCUT2 fragment file
+│   ├── *.haplotype_output_file*          # HapCUT2 haplotype phasing output
 │   └── *.yml                             # Process version files
 ├── SV/                                   # Structural Variants
 │   ├── *.candidate_small_indels.vcf.gz   # Manta small indel candidates
@@ -296,6 +316,11 @@ outdir/
 - **EXPANSIONHUNTER**: Repeat expansion detection
 - **EXPANSIONHUNTERDENOVO_PROFILE**: De novo repeat detection
 
+### Haplotype Phasing
+- **BCFTOOLS_VIEW_DIPLOID**: Filter VCF for diploid genotypes (0/0, 0/1, 1/1)
+- **HAPCUT2_EXTRACTHAIRS**: Extract haplotype-informative reads from BAM
+- **HAPCUT2_HAPCUT2**: Assemble haplotype blocks and phase heterozygous variants
+
 ### Format Conversion
 - **SAMTOOLS_BAM2CRAM**: BAM to CRAM conversion
 
@@ -313,6 +338,8 @@ The pipeline uses the following Docker images (configure in `nextflow.config`):
 - `multiqc_docker`: MultiQC report generation
 - `deepvariant_docker`: DeepVariant
 - `automap_docker`: AutoMap variant annotation
+- `bcftools_docker`: BCFtools for VCF filtering and manipulation
+- `hapcut2_docker`: HapCUT2 for haplotype phasing
 - `manta_docker`: Manta
 - `expansionhunter_docker`: ExpansionHunter
 - `expansionhunterdenovo_docker`: ExpansionHunterDenovo
@@ -332,6 +359,9 @@ The pipeline uses the following Docker images (configure in `nextflow.config`):
 | MULTIQC | 4 GB | 4 |
 | DEEPVARIANT_RUNDEEPVARIANT | 192 GB | 48 |
 | AUTOMAP | 16 GB | 8 |
+| BCFTOOLS_VIEW_DIPLOID | 16 GB | 8 |
+| HAPCUT2_EXTRACTHAIRS | 16 GB | 8 |
+| HAPCUT2_HAPCUT2 | 16 GB | 8 |
 | MANTA_GERMLINE | 32 GB | 16 |
 | EXPANSIONHUNTER | 16 GB | 8 |
 | EXPANSIONHUNTERDENOVO_PROFILE | 16 GB | 8 |
@@ -412,6 +442,8 @@ If you use this pipeline in your research, please cite:
 - FASTP: Chen, S. et al. (2018). fastp: an ultra-fast all-in-one FASTQ preprocessor. Bioinformatics, 34(17), i884-i890.
 - MultiQC: Ewels, P. et al. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics, 32(19), 3047-3048.
 - DeepVariant: Poplin, R. et al. (2018). A universal SNP and small-indel variant caller using deep neural networks. Nature Biotechnology, 36(10), 983-987.
+- HapCUT2: Edge, P. et al. (2017). HapCUT2: robust and accurate haplotype assembly for diverse sequencing technologies. Genome Research, 27(5), 801-812.
+- BCFtools: Danecek, P. et al. (2021). Twelve years of SAMtools and BCFtools. GigaScience, 10(2), giab008.
 - Manta: Chen, X. et al. (2016). Manta: rapid detection of structural variants and indels for germline and cancer sequencing applications. Bioinformatics, 32(8), 1220-1222.
 - ExpansionHunter: Dolzhenko, E. et al. (2019). ExpansionHunter: a sequence-graph-based tool to analyze variation in short tandem repeat regions. Bioinformatics, 35(22), 4754-4756.
 - CNVpytor: Abyzov, A. et al. (2020). CNVpytor: a tool for copy number variation detection and analysis from read depth and allele imbalance in whole-genome sequencing. BMC Genomics, 21(1), 1-8.
