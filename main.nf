@@ -5,6 +5,7 @@ include { BAM_PROCESSING } from './subworkflows/local/bam/main'
 include { CRAM_PROCESSING } from './subworkflows/local/cram/main'
 include { COMMON_ANALYSIS } from './subworkflows/local/common/main'
 
+
 log.info """\
     SHORTREAD - WGS _ W F   P I P E L I N E
     ===================================
