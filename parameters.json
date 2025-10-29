@@ -32,6 +32,12 @@
     "mosdepth_docker": {
         "description": "Docker image for Mosdepth"
     },
+    "bcftools_docker": {
+        "description": "Docker image for BCFtools"
+    },
+    "hapcut2_docker": {
+        "description": "Docker image for Hapcut2"
+    },
     "input_type": {
         "description": "Type of input data: fastq, bam, or cram"
     },
