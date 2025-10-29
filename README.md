@@ -6,8 +6,18 @@
 
 A comprehensive Nextflow pipeline for whole genome sequencing (WGS) analysis of germline short-read data. This pipeline is inspired by the [rare diseases pipeline from nf-core](https://nf-co.re/raredisease).
 
-**Version**: 1.0.1  
+**Version**: 1.1.0  
 **Last Updated**: January 2025
+
+## 🎉 Version 1.1.0 Release
+
+This release adds haplotype phasing capabilities to the pipeline:
+
+- ✅ **Haplotype Phasing with HapCUT2**: Phase heterozygous variants and determine haplotype blocks
+- ✅ **BCFtools Integration**: Filter and preprocess VCF files for phasing
+- ✅ **Subworkflow Architecture**: Modular design with FASTQ, BAM, CRAM processing paths
+- ✅ **Enhanced Variant Analysis**: Complete phasing workflow integrated after DeepVariant
+- ✅ **Updated Documentation**: Comprehensive architecture diagrams and process documentation
 
 ## 🎉 Version 1.0.1 Release
 

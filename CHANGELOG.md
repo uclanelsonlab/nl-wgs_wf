@@ -7,16 +7,87 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Release Process
-- Version 1.0.1 tagged and released on GitHub
-- Documentation updated to reflect output structure changes and resource updates
-- Pipeline tested and validated for production use
-
 ### Planned
 - Performance optimizations for large-scale datasets
 - Additional variant calling tools integration
 - Enhanced reporting and visualization features
 - Support for additional cloud platforms
+
+## [1.1.0] - 2025-01-29
+
+**Release Date**: January 29, 2025  
+**Status**: Production Ready  
+**Breaking Changes**: None
+
+### Added
+- **HapCUT2 Phasing Module**: Complete haplotype phasing workflow for heterozygous variants
+  - `HAPCUT2_EXTRACTHAIRS`: Extract haplotype-informative reads from BAM files
+  - `HAPCUT2_HAPCUT2`: Assemble haplotype blocks and phase variants
+- **BCFtools Module**: VCF filtering and preprocessing for phasing
+  - `BCFTOOLS_VIEW_DIPLOID`: Filter VCF for diploid genotypes (0/0, 0/1, 1/1)
+- **HAPCUT2_PHASING Subworkflow**: Orchestrates the complete phasing pipeline
+  - Integrates BCFtools filtering, read extraction, and haplotype phasing
+  - Processes DeepVariant VCF output for phase determination
+- **Subworkflow Architecture**: Modular pipeline organization
+  - `FASTQ_PROCESSING`: Handle FASTQ input with FASTP, alignment, and sorting
+  - `BAM_PROCESSING`: Handle BAM input with sorting
+  - `CRAM_PROCESSING`: Handle CRAM input with conversion to BAM
+  - `COMMON_ANALYSIS`: Shared downstream analysis for all input types
+- **Docker Support**: New container parameters
+  - `bcftools_docker`: BCFtools container for VCF operations
+  - `hapcut2_docker`: HapCUT2 container for phasing
+- **Documentation**: Comprehensive updates
+  - Updated architecture mermaid diagram showing subworkflow structure
+  - Added HapCUT2 and BCFtools process documentation
+  - Added phasing output files to output structure documentation
+  - Added resource requirements for new processes
+  - Added citations for HapCUT2 and BCFtools
+
+### Changed
+- **Pipeline Architecture**: Reorganized into input-specific subworkflows
+  - Main workflow now routes to FASTQ, BAM, or CRAM processing based on input type
+  - All paths converge to COMMON_ANALYSIS for downstream processing
+- **Output Structure**: SNV directory now includes phasing outputs
+  - `*.diploid.vcf`: Filtered diploid variants
+  - `*.fragment_file`: Haplotype-informative read fragments
+  - `*.haplotype_output_file*`: Phased haplotype blocks
+
+### Technical Details
+
+#### New Processes
+- **BCFTOOLS_VIEW_DIPLOID**:
+  - Resources: 16GB memory, 8 CPUs, 2h runtime
+  - Filters VCF using bcftools view with genotype criteria
+  - Publishes to SNV directory
+  
+- **HAPCUT2_EXTRACTHAIRS**:
+  - Resources: 16GB memory, 8 CPUs, 2h runtime
+  - Extracts reads using extractHAIRS tool
+  - Requires BAM, VCF, and reference genome
+  
+- **HAPCUT2_HAPCUT2**:
+  - Resources: 16GB memory, 8 CPUs, 2h runtime
+  - Performs phasing using HAPCUT2 algorithm
+  - Generates haplotype block output
+
+#### Subworkflow Organization
+- **FASTQ_PROCESSING**: FASTP → BWAMEM2_MEM → SAMTOOLS_SORT
+- **BAM_PROCESSING**: SAMTOOLS_SORT (re-sort for consistency)
+- **CRAM_PROCESSING**: SAMTOOLS_CRAM2BAM
+- **HAPCUT2_PHASING**: BCFTOOLS_VIEW_DIPLOID → HAPCUT2_EXTRACTHAIRS → HAPCUT2_HAPCUT2
+- **COMMON_ANALYSIS**: All downstream QC, variant calling, and analysis
+
+#### Configuration Changes
+- Added `bcftools_docker` and `hapcut2_docker` parameters to `nextflow.config`
+- Added process configurations with labels `bcftools_view_diploid` and `hapcut2`
+- Added resource allocations for new processes
+- Updated `parameters.json` with new Docker image parameters
+
+#### Workflow Integration
+- HapCUT2 phasing runs after DeepVariant in COMMON_ANALYSIS subworkflow
+- Takes indexed BAM and DeepVariant VCF as inputs
+- Integrates seamlessly with existing variant calling pipeline
+- Outputs publish to SNV directory alongside DeepVariant results
 
 ## [1.0.1] - 2025-01-27
 
@@ -169,6 +240,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+### Version 1.1.0
+- **Date**: 2025-01-29
+- **Status**: Production Ready
+- **Features**: Haplotype phasing with HapCUT2, subworkflow architecture, BCFtools integration
+- **Breaking Changes**: None
+- **Git Tag**: v1.1.0
+
+### Version 1.0.1
+- **Date**: 2025-01-27
+- **Status**: Production Ready
+- **Features**: Bug fixes and resource optimizations
+- **Breaking Changes**: Output directory structure simplified
+- **Git Tag**: v1.0.1
+- **Commit**: 7280316
+
 ### Version 1.0.0
 - **Date**: 2025-01-27
 - **Status**: Production Ready
@@ -186,6 +272,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## Migration Guide
+
+### From Version 1.0.1 to 1.1.0
+
+#### Breaking Changes
+- None. This is a feature addition with full backward compatibility.
+
+#### Required Updates
+1. Add `bcftools_docker` parameter to `nextflow.config`
+2. Add `hapcut2_docker` parameter to `nextflow.config`
+3. Update `parameters.json` with new Docker image parameters (if using parameter file)
+4. No changes required to existing workflows - phasing runs automatically after DeepVariant
+
+#### New Features
+- Haplotype phasing with HapCUT2
+- BCFtools VCF filtering
+- Subworkflow architecture for better modularity
+- Support for FASTQ, BAM, and CRAM inputs through dedicated subworkflows
+- Enhanced documentation with updated architecture diagrams
+
+#### Optional Configuration
+- HapCUT2 processes can be disabled by setting `task.ext.when = false` in config
+- Phasing outputs publish to SNV directory by default
+- No additional input parameters required
 
 ### From Version 0.1.0 to 1.0.0
 
