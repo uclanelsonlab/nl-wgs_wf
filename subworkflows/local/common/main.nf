@@ -9,6 +9,7 @@ include { EXPANSIONHUNTER; EXPANSIONHUNTERDENOVO_PROFILE } from '../../../module
 include { MANTA_GERMLINE } from '../../../modules/manta/main'
 include { CNVPYTOR } from '../../../modules/cnvpytor/main'
 include { HAPCUT2_PHASING } from '../hapcut2/main'
+include { STRLING_EXTRACT; STRLING_CALL } from '../../../modules/strling/main'
 
 workflow COMMON_ANALYSIS {
     take:
@@ -18,6 +19,7 @@ workflow COMMON_ANALYSIS {
     ch_fastp_html   // channel: [meta, html] (may be empty)
     ch_fastp_json   // channel: [meta, json] (may be empty)
     input_type      // val: string ("fastq", "bam", or "cram")
+    fasta_str       // val: path to STR file
 
     main:
     ch_versions = Channel.empty()
@@ -120,6 +122,21 @@ workflow COMMON_ANALYSIS {
     )
     ch_versions = ch_versions.mix(EXPANSIONHUNTER.out.versions)
 
+    // Extract STR information and call STR variants
+    STRLING_EXTRACT(
+        SAMTOOLS_INDEX.out.bam,
+        ch_fasta,
+        fasta_str
+    )
+    ch_versions = ch_versions.mix(STRLING_EXTRACT.out.versions)
+
+    STRLING_CALL(
+        SAMTOOLS_INDEX.out.bam,
+        ch_fasta,
+        STRLING_EXTRACT.out.bin
+    )
+    ch_versions = ch_versions.mix(STRLING_CALL.out.versions)
+
     EXPANSIONHUNTERDENOVO_PROFILE(
         SAMTOOLS_INDEX.out.bam,
         ch_fasta,
@@ -142,7 +159,7 @@ workflow COMMON_ANALYSIS {
     ch_versions = ch_versions.mix(CNVPYTOR.out.versions)
 
     emit:
-    multiqc_report = MULTIQC.out.report     // channel: [meta, html]
-    vcf           = DEEPVARIANT_RUNDEEPVARIANT.out.vcf  // channel: [meta, vcf]
-    versions      = ch_versions             // channel: [versions.yml]
+        multiqc_report = MULTIQC.out.report     // channel: [meta, html]
+        vcf           = DEEPVARIANT_RUNDEEPVARIANT.out.vcf  // channel: [meta, vcf]
+        versions      = ch_versions             // channel: [versions.yml]
 }

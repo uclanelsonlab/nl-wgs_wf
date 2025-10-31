@@ -38,6 +38,9 @@
     "hapcut2_docker": {
         "description": "Docker image for Hapcut2"
     },
+    "strling_docker": {
+        "description": "Docker image for STRling"
+    },
     "input_type": {
         "description": "Type of input data: fastq, bam, or cram"
     },
@@ -72,6 +75,9 @@
     },
     "fasta_bwt": {
         "description": "Reference genome bwt file"
+    },
+    "fasta_str": {
+        "description": "Reference genome STR index file for STRling analysis (.str)"
     },
     "variant_catalog": {
         "description": "Variant catalog file"
