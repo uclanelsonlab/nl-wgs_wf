@@ -15,6 +15,7 @@ log.info """\
     input_2      : ${params.input_2}
     fasta        : ${params.fasta}
     fai          : ${params.fai}
+    fasta_str    : ${params.fasta_str}
     mt_bed       : ${params.mt_bed}
     """
     .stripIndent(true)
@@ -162,6 +163,7 @@ workflow {
         ch_fasta_dict,
         ch_fastp_html,
         ch_fastp_json,
-        params.input_type
+        params.input_type,
+        params.fasta_str
     )
 }
