@@ -23,6 +23,7 @@ process CNVPYTOR {
         cnvpytor -root ${prefix}.pytor -rd ${bam} -T ${fasta}
         cnvpytor -root ${prefix}.pytor -his 1000
         cnvpytor -root ${prefix}.pytor -partition 1000
+        cnvpytor -root ${prefix}.pytor -call 1000
         cnvpytor -root ${prefix}.pytor -view 1000 <<EOF
         set Q0_range -1 0.5
         set p_N 0 0.5

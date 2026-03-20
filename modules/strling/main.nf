@@ -54,10 +54,10 @@ process STRLING_CALL {
         tuple val(meta3), path(bin)
 
     output:
-        tuple val(meta), path("*-results/*-bounds.txt")  , emit: bounds
-        tuple val(meta), path("*-results/*-genotype.txt"), emit: genotype
-        tuple val(meta), path("*-results/*-unplaced.txt"), emit: unplaced
-        path "strling_versions.yml"                      , emit: versions
+        tuple val(meta), path("*bounds.txt")  , emit: bounds
+        tuple val(meta), path("*genotype.txt"), emit: genotype
+        tuple val(meta), path("*unplaced.txt"), emit: unplaced
+        path "strling_versions.yml"           , emit: versions
 
     when:
         task.ext.when == null || task.ext.when
@@ -67,10 +67,8 @@ process STRLING_CALL {
         def prefix = task.ext.prefix ?: "${meta.id}"
         def fasta = fasta_files[0]  // First file is the FASTA
         """
-        mkdir -p ${prefix}-results/
-
         strling call \\
-            --output-prefix ${prefix}-results/${prefix} \\
+            --output-prefix ${prefix} \\
             -f $fasta \\
             $args \\
             $aln \\
@@ -85,10 +83,9 @@ process STRLING_CALL {
     stub:
         def prefix = task.ext.prefix ?: "${meta.id}"
         """
-        mkdir -p ${prefix}-results/
-        touch ${prefix}-results/${prefix}-bounds.txt
-        touch ${prefix}-results/${prefix}-genotype.txt
-        touch ${prefix}-results/${prefix}-unplaced.txt
+        touch ${prefix}-bounds.txt
+        touch ${prefix}-genotype.txt
+        touch ${prefix}-unplaced.txt
 
         cat <<-END_VERSIONS > strling_versions.yml
         "${task.process}":
