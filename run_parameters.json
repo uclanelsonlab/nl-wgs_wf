@@ -33,6 +33,7 @@
     "genome": "hg38",
     "ref_qc": "s3://ucla-rare-diseases/aws-healthomics-pipelines/assets/references/NA12878_qc.tar.gz",
     "input_type": "fastq",
-    "mt_bed": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/MT_hg38.bed"
+    "mt_bed": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/MT_hg38.bed",
+    "run_manta": false
 }
 
