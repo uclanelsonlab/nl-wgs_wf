@@ -24,15 +24,16 @@
     "fasta_bwt": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.fa.bwt.2bit.64",
     "fasta_pac": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.fa.pac",
     "fasta_str": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/ucsc/bwamem2/hg38.str",
-    "input_1": "s3://ucla-rare-diseases/UCLA-UDN/raw-data/CCRD-cases/IPH-1023/IPH-1023P_1.fastq.gz",
-    "input_2": "s3://ucla-rare-diseases/UCLA-UDN/raw-data/CCRD-cases/IPH-1023/IPH-1023P_2.fastq.gz",
-    "sample_name": "IPH-1023P",
+    "input_1": "s3://ucla-rare-diseases/UCLA-UDN/raw-data/MGD-cases/MGD9256/3855331.GATAGCCTTG-TACCACAATG_S25_merge_R1_001.fastq.gz",
+    "input_2": "s3://ucla-rare-diseases/UCLA-UDN/raw-data/MGD-cases/MGD9256/3855331.GATAGCCTTG-TACCACAATG_S25_merge_R2_001.fastq.gz",
+    "sample_name": "MGD9256",
     "variant_catalog": "s3://ucla-rare-diseases/aws-healthomics-pipelines/assets/expansionhunter/hg38/variant_catalog.json",
     "min_anchor_mapq": 50,
     "max_irr_mapq": 40,
     "genome": "hg38",
     "ref_qc": "s3://ucla-rare-diseases/aws-healthomics-pipelines/assets/references/NA12878_qc.tar.gz",
     "input_type": "fastq",
-    "mt_bed": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/MT_hg38.bed"
+    "mt_bed": "s3://ucla-rare-diseases/UCLA-UDN/assets/reference/MT_hg38.bed",
+    "run_manta": false
 }
 

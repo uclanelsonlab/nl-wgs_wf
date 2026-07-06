@@ -102,5 +102,9 @@
     },
     "mt_bed": {
         "description": "Mitochondrial genes BED file for mosdepth coverage analysis"
+    },
+    "run_manta": {
+        "description": "Run Manta structural variant calling (true/false). Set to false to skip Manta analysis.",
+        "optional": true
     }
 }

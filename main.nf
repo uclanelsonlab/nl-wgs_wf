@@ -16,6 +16,7 @@ log.info """\
     fasta        : ${params.fasta}
     fai          : ${params.fai}
     mt_bed       : ${params.mt_bed}
+    run_manta    : ${params.run_manta}
     """
     .stripIndent(true)
 

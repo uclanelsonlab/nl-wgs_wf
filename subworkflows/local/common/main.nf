@@ -145,12 +145,14 @@ workflow COMMON_ANALYSIS {
     )
     ch_versions = ch_versions.mix(EXPANSIONHUNTERDENOVO_PROFILE.out.versions)
 
-    // Structural variant calling
-    MANTA_GERMLINE(
-        SAMTOOLS_INDEX.out.bam,
-        ch_fasta
-    )
-    ch_versions = ch_versions.mix(MANTA_GERMLINE.out.versions)
+    // Structural variant calling (optional)
+    if (params.run_manta) {
+        MANTA_GERMLINE(
+            SAMTOOLS_INDEX.out.bam,
+            ch_fasta
+        )
+        ch_versions = ch_versions.mix(MANTA_GERMLINE.out.versions)
+    }
 
     CNVPYTOR(
         SAMTOOLS_INDEX.out.bam,
